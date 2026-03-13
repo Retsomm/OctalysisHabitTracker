@@ -1,0 +1,66 @@
+name: Build and Deploy Fullstack
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  # 後端工作流
+  backend-process:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'yarn'
+          cache-dependency-path: './backend/yarn.lock'
+
+      - name: Install & Build Backend
+        run: |
+          cd backend
+          yarn install
+          npx prisma generate
+          yarn build
+
+      - name: Database Migration (Only on Push to Main)
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: |
+          cd backend
+          npx prisma migrate deploy
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+
+      - name: "Deploy Backend (Example: Render)"
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main' && success()
+        run: |
+          curl -X POST ${{ secrets.RENDER_BACKEND_DEPLOY_HOOK }}
+
+  # 前端工作流
+  frontend-process:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'yarn'
+          cache-dependency-path: './frontend/yarn.lock'
+
+      - name: Install & Build Frontend
+        run: |
+          cd frontend
+          yarn install
+          yarn build
+        env:
+          VITE_API_URL: ${{ secrets.VITE_API_URL }}
+
+      - name: "Deploy Frontend (Example: Vercel/Netlify)"
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main' && success()
+        run: |
+          # 這裡通常透過平台提供的 CLI 進行部署，或像後端一樣使用 Deploy Hook
+          curl -X POST ${{ secrets.VERCEL_FRONTEND_DEPLOY_HOOK }}
