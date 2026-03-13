@@ -30,9 +30,36 @@ jobs:
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         run: |
           cd backend
+          if [ -z "$DATABASE_URL" ]; then
+            echo "::error::Missing DATABASE_URL secret"
+            exit 1
+          fi
+
           if [ -z "$DIRECT_URL" ]; then
             export DIRECT_URL="$DATABASE_URL"
           fi
+
+          if [[ "$DATABASE_URL" != *"sslmode="* ]]; then
+            if [[ "$DATABASE_URL" == *"?"* ]]; then
+              export DATABASE_URL="${DATABASE_URL}&sslmode=require"
+            else
+              export DATABASE_URL="${DATABASE_URL}?sslmode=require"
+            fi
+          fi
+
+          if [[ "$DIRECT_URL" != *"sslmode="* ]]; then
+            if [[ "$DIRECT_URL" == *"?"* ]]; then
+              export DIRECT_URL="${DIRECT_URL}&sslmode=require"
+            else
+              export DIRECT_URL="${DIRECT_URL}?sslmode=require"
+            fi
+          fi
+
+          FIRST_MIGRATION=$(find prisma/migrations -mindepth 1 -maxdepth 1 -type d -exec basename {} \; | sort | head -n1)
+          if [ -n "$FIRST_MIGRATION" ]; then
+            npx prisma migrate resolve --applied "$FIRST_MIGRATION" || true
+          fi
+
           npx prisma migrate deploy
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
