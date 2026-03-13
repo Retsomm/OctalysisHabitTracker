@@ -30,9 +30,13 @@ jobs:
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         run: |
           cd backend
+          if [ -z "$DIRECT_URL" ]; then
+            export DIRECT_URL="$DATABASE_URL"
+          fi
           npx prisma migrate deploy
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          DIRECT_URL: ${{ secrets.DIRECT_URL }}
 
       - name: "Deploy Backend (Example: Render)"
         if: github.event_name == 'push' && github.ref == 'refs/heads/main' && success()

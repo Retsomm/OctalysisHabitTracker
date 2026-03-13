@@ -121,9 +121,15 @@ yarn build
 
 ### 後端 (.env)
 - `JWT_SECRET`: JWT 令牌密鑰
-- `DATABASE_URL`: PostgreSQL 資料庫連接 URL
+- `DATABASE_URL`: Prisma Client 使用的資料庫連接 URL（建議 Supabase Pooler）
+- `DIRECT_URL`: Prisma Migration 使用的直連 URL（Supabase Direct Connection）
 - `LINE_CLIENT_ID/SECRET`: LINE Login OAuth 設定
 - `X_CLIENT_ID/SECRET`: X (Twitter) OAuth 設定
+
+#### Supabase + Prisma 建議設定
+- `DATABASE_URL`: 使用 Supabase Connection Pooler（通常為 `pooler.supabase.com`）
+- `DIRECT_URL`: 使用 Supabase Direct Connection（`db.<project-ref>.supabase.co:5432`）
+- CI（GitHub Actions）請在 Secrets 同時設定 `DATABASE_URL` 與 `DIRECT_URL`
 
 ### 前端 (.env)
 - `VITE_GOOGLE_CLIENT_ID`: Google OAuth 客戶端 ID
