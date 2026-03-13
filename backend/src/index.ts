@@ -7,12 +7,29 @@ import userRoutes from './routes/user.js'
 
 const app = express()
 
-app.use(cors({ origin: ['http://localhost:5173', 'http://127.0.0.1:5173'], credentials: true }))
+const allowedOrigins = [
+  'http://localhost:5173',
+  'http://127.0.0.1:5173',
+  'https://octalysis-habit-tracker.vercel.app'
+]
+
+app.use(cors({
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true)
+    } else {
+      callback(new Error('Not allowed by CORS'))
+    }
+  },
+  credentials: true
+}))
+
 app.use(express.json())
 
 // X OAuth callback relay (X redirects here, we forward to frontend)
 app.get('/auth/callback/x', (req: Request, res: Response) => {
-  const frontendUrl = process.env.FRONTEND_URL ?? 'http://127.0.0.1:5173'
+  const isProd = process.env.NODE_ENV === 'production'
+  const frontendUrl = process.env.FRONTEND_URL || (isProd ? 'https://octalysis-habit-tracker.vercel.app' : 'http://127.0.0.1:5173')
   const params = new URLSearchParams(req.query as Record<string, string>)
   res.redirect(`${frontendUrl}/auth/callback/x?${params.toString()}`)
 })
