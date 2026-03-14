@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-import { useGoogleLogin } from '@react-oauth/google'
 import { useAppDispatch } from '../store/hooks'
 import { loginSuccess } from '../store/authSlice'
 import { api } from '../store/api'
@@ -120,13 +119,17 @@ const LoginPage = (): React.JSX.Element => {
     window.location.href = `https://access.line.me/oauth2/v2.1/authorize?${params.toString()}`
   }
 
-  const login = useGoogleLogin({
-    ux_mode: 'redirect',
-    redirect_uri: `${window.location.origin}/auth/callback/google`,
-    onError: () => {
-      setError('Google 登入被取消或發生錯誤')
-    },
-  })
+  const handleGoogleLogin = (): void => {
+    const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID as string
+    const redirectUri = `${window.location.origin}/auth/callback/google`
+    const params = new URLSearchParams({
+      response_type: 'token',
+      client_id: clientId,
+      redirect_uri: redirectUri,
+      scope: 'openid profile email',
+    })
+    window.location.href = `https://accounts.google.com/o/oauth2/v2/auth?${params.toString()}`
+  }
 
   const handleGuestLogin = async (): Promise<void> => {
     try {
@@ -233,7 +236,7 @@ const LoginPage = (): React.JSX.Element => {
           <button
             onClick={() => {
               setError(null)
-              login()
+              handleGoogleLogin()
             }}
             disabled={isLoading}
             className="w-full flex items-center justify-center gap-3 bg-white hover:bg-zinc-100 text-zinc-900 font-semibold py-3.5 px-6 rounded-2xl transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed shadow-lg shadow-black/20 cursor-pointer"
