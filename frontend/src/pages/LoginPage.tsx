@@ -139,6 +139,9 @@ const LoginPage = (): React.JSX.Element => {
       setError('Google 登入被取消或發生錯誤')
       setIsLoading(false)
     },
+    onNonOAuthError: () => {
+      setIsLoading(false)
+    },
   })
 
   const handleGuestLogin = async (): Promise<void> => {
@@ -246,7 +249,6 @@ const LoginPage = (): React.JSX.Element => {
           <button
             onClick={() => {
               setError(null)
-              setIsLoading(true)
               login()
             }}
             disabled={isLoading}
