@@ -11,6 +11,7 @@ import Explore from './pages/Explore'
 import LoginPage from './pages/LoginPage'
 import LineCallback from './pages/LineCallback'
 import XCallback from './pages/XCallback'
+import GoogleCallback from './pages/GoogleCallback'
 
 const AppInner = (): React.JSX.Element => {
   const isAuthenticated = useAppSelector(state => state.auth.isAuthenticated)
@@ -22,6 +23,10 @@ const AppInner = (): React.JSX.Element => {
 
   if (pathname === '/auth/callback/x') {
     return <XCallback />
+  }
+
+  if (pathname === '/auth/callback/google') {
+    return <GoogleCallback />
   }
 
   if (!isAuthenticated) {

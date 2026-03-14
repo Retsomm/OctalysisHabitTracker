@@ -3,7 +3,7 @@ import { useGoogleLogin } from '@react-oauth/google'
 import { useAppDispatch } from '../store/hooks'
 import { loginSuccess } from '../store/authSlice'
 import { api } from '../store/api'
-import { useLoginGoogleMutation, useLoginGuestMutation } from '../store/api'
+import { useLoginGuestMutation } from '../store/api'
 
 const OctagonLogo = (): React.JSX.Element => (
   <svg width="56" height="56" viewBox="0 0 36 36" fill="none">
@@ -67,9 +67,8 @@ const XIcon = (): React.JSX.Element => (
 
 const LoginPage = (): React.JSX.Element => {
   const dispatch = useAppDispatch()
-  const [isLoading, setIsLoading] = useState(false)
+  const [isLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [loginGoogle] = useLoginGoogleMutation()
   const [loginGuest] = useLoginGuestMutation()
 
   const handleXLogin = async (): Promise<void> => {
@@ -122,25 +121,10 @@ const LoginPage = (): React.JSX.Element => {
   }
 
   const login = useGoogleLogin({
-    onSuccess: async tokenResponse => {
-      setIsLoading(true)
-      setError(null)
-      try {
-        const result = await loginGoogle({ token: tokenResponse.access_token }).unwrap()
-        dispatch(api.util.resetApiState())
-        dispatch(loginSuccess({ user: result.user, token: result.token }))
-      } catch {
-        setError('登入失敗，請再試一次')
-      } finally {
-        setIsLoading(false)
-      }
-    },
+    ux_mode: 'redirect',
+    redirect_uri: `${window.location.origin}/auth/callback/google`,
     onError: () => {
       setError('Google 登入被取消或發生錯誤')
-      setIsLoading(false)
-    },
-    onNonOAuthError: () => {
-      setIsLoading(false)
     },
   })
 
