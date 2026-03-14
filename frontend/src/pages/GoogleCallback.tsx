@@ -16,20 +16,28 @@ const GoogleCallback = (): React.JSX.Element => {
     hasRun.current = true
 
     const handleCallback = async (): Promise<void> => {
-      const hash = window.location.hash
-      const params = new URLSearchParams(hash.startsWith('#') ? hash.slice(1) : hash)
-      const accessToken = params.get('access_token')
+      const params = new URLSearchParams(window.location.search)
+      const code = params.get('code')
+      const state = params.get('state')
+      const savedState = sessionStorage.getItem('google_oauth_state')
+      sessionStorage.removeItem('google_oauth_state')
 
-      if (!accessToken) {
+      if (!code) {
+        setError('Google 登入失敗，請重新嘗試')
+        return
+      }
+
+      if (state !== savedState) {
         setError('Google 登入失敗，請重新嘗試')
         return
       }
 
       try {
+        const redirectUri = `${window.location.origin}/auth/callback/google`
         const result = await fetch('/api/backend/auth/google', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ token: accessToken }),
+          body: JSON.stringify({ code, redirectUri }),
         })
         const data = await result.json() as { token: string; user: AuthUser } | { error: string }
         if (!result.ok || 'error' in data) {

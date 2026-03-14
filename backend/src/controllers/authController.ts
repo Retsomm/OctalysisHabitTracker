@@ -3,12 +3,12 @@ import * as authService from '../services/authService.js'
 
 export const googleLogin = async (req: Request, res: Response): Promise<void> => {
   try {
-    const { token } = req.body as { token: string }
-    if (!token) {
-      res.status(400).json({ error: 'token is required' })
+    const { code, redirectUri } = req.body as { code: string; redirectUri: string }
+    if (!code || !redirectUri) {
+      res.status(400).json({ error: 'code and redirectUri are required' })
       return
     }
-    const result = await authService.loginWithGoogle(token)
+    const result = await authService.loginWithGoogle(code, redirectUri)
     res.json(result)
   } catch (err) {
     const message = err instanceof Error ? err.message : 'Google login failed'

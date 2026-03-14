@@ -122,11 +122,14 @@ const LoginPage = (): React.JSX.Element => {
   const handleGoogleLogin = (): void => {
     const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID as string
     const redirectUri = `${window.location.origin}/auth/callback/google`
+    const state = crypto.randomUUID()
+    sessionStorage.setItem('google_oauth_state', state)
     const params = new URLSearchParams({
-      response_type: 'token',
+      response_type: 'code',
       client_id: clientId,
       redirect_uri: redirectUri,
       scope: 'openid profile email',
+      state,
     })
     window.location.href = `https://accounts.google.com/o/oauth2/v2/auth?${params.toString()}`
   }

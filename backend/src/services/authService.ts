@@ -34,9 +34,32 @@ const toAuthUser = (user: { id: string; name: string; email: string | null; avat
   provider: user.provider as AuthUser['provider'],
 })
 
-export const loginWithGoogle = async (token: string): Promise<{ token: string; user: AuthUser }> => {
+export const loginWithGoogle = async (code: string, redirectUri: string): Promise<{ token: string; user: AuthUser }> => {
+  const clientId = process.env.GOOGLE_CLIENT_ID
+  const clientSecret = process.env.GOOGLE_CLIENT_SECRET
+  if (!clientId || !clientSecret) throw new Error('Google credentials not configured')
+
+  const tokenRes = await fetch('https://oauth2.googleapis.com/token', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: new URLSearchParams({
+      grant_type: 'authorization_code',
+      code,
+      redirect_uri: redirectUri,
+      client_id: clientId,
+      client_secret: clientSecret,
+    }),
+  })
+  if (!tokenRes.ok) {
+    const errBody = await tokenRes.text()
+    console.error('Google token exchange failed:', tokenRes.status, errBody)
+    throw new Error('Failed to exchange Google code')
+  }
+
+  const tokenData = await tokenRes.json() as { access_token: string }
+
   const response = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
-    headers: { Authorization: `Bearer ${token}` },
+    headers: { Authorization: `Bearer ${tokenData.access_token}` },
   })
   if (!response.ok) throw new Error('Invalid Google token')
 
