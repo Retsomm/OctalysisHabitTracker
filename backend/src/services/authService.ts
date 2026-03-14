@@ -135,7 +135,11 @@ export const loginWithX = async (code: string, redirectUri: string, codeVerifier
       code_verifier: codeVerifier,
     }),
   })
-  if (!tokenRes.ok) throw new Error('Failed to exchange X code')
+  if (!tokenRes.ok) {
+    const errBody = await tokenRes.text()
+    console.error('X token exchange failed:', tokenRes.status, errBody)
+    throw new Error('Failed to exchange X code')
+  }
 
   const tokenData = await tokenRes.json() as { access_token: string }
 
