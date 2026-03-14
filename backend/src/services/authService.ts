@@ -143,12 +143,10 @@ export const loginWithX = async (code: string, redirectUri: string, codeVerifier
   const clientSecret = process.env.X_CLIENT_SECRET
   if (!clientId || !clientSecret) throw new Error('X credentials not configured')
 
-  const basicAuth = Buffer.from(`${clientId}:${clientSecret}`).toString('base64')
   const tokenRes = await fetch('https://api.twitter.com/2/oauth2/token', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded',
-      'Authorization': `Basic ${basicAuth}`,
     },
     body: new URLSearchParams({
       grant_type: 'authorization_code',
@@ -156,6 +154,7 @@ export const loginWithX = async (code: string, redirectUri: string, codeVerifier
       redirect_uri: redirectUri,
       code_verifier: codeVerifier,
       client_id: clientId,
+      client_secret: clientSecret,
     }),
   })
   if (!tokenRes.ok) {
