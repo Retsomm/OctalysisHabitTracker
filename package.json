@@ -2,10 +2,20 @@
   "name": "octalysis-habit-tracker",
   "private": true,
   "license": "MIT",
-  "workspaces": [
-    "backend",
-    "frontend"
-  ],
+  "workspaces": {
+    "packages": [
+      "backend",
+      "frontend"
+    ],
+    "nohoist": [
+      "**/vite",
+      "**/vite/**",
+      "**/@vitejs/plugin-react",
+      "**/@vitejs/plugin-react/**",
+      "**/@tailwindcss/vite",
+      "**/@tailwindcss/vite/**"
+    ]
+  },
   "scripts": {
     "dev": "concurrently -k -n BE,FE -c cyan,green \"yarn workspace octalysis-backend dev\" \"yarn workspace frontend dev\"",
     "db:migrate": "yarn workspace octalysis-backend db:migrate",
