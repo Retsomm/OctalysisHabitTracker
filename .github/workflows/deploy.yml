@@ -80,13 +80,12 @@ jobs:
         with:
           node-version: '22'
           cache: 'yarn'
-          cache-dependency-path: './frontend/yarn.lock'
+          cache-dependency-path: './yarn.lock'
 
       - name: Install & Build Frontend
         run: |
-          cd frontend
           yarn install
-          yarn build
+          yarn workspace frontend build
         env:
           VITE_API_URL: ${{ secrets.VITE_API_URL }}
 
