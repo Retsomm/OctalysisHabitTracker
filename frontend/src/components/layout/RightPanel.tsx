@@ -7,6 +7,7 @@ import { TrophyIcon, MedalIcon, TargetIcon } from '../common/Icons'
 const RightPanel = (): React.JSX.Element => {
   const { data: profile } = useGetUserProfileQuery()
   const { data: leaderboard = [] } = useGetLeaderboardQuery()
+  const topLeaderboard = leaderboard.slice(0, 10)
 
   const allAchievements = ACHIEVEMENTS.map(a => {
     const earned = profile?.achievements.find(ea => ea.id === a.id)
@@ -21,11 +22,11 @@ const RightPanel = (): React.JSX.Element => {
           <span className="text-amber-400"><TrophyIcon size={15} /></span>
           本週排行榜
         </h3>
-        {leaderboard.length === 0 ? (
+        {topLeaderboard.length === 0 ? (
           <p className="text-zinc-600 text-xs text-center py-4">尚無排行榜資料</p>
         ) : (
           <div className="space-y-2">
-            {leaderboard.map((lu, index) => {
+            {topLeaderboard.map((lu, index) => {
               const isMe = lu.id === profile?.id
               const medals = ['🥇', '🥈', '🥉']
               const rankIcon = index < 3 ? medals[index] : `${index + 1}`

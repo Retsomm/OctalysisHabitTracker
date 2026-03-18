@@ -6,6 +6,8 @@ import { useGetRecentHabitsQuery } from '../store/api'
 
 const Home = (): React.JSX.Element => {
   const { data: recentHabits = [] } = useGetRecentHabitsQuery()
+  const latestRecentHabits = recentHabits.slice(0, 5)
+
   return (
     <div>
       {/* Page header */}
@@ -25,10 +27,10 @@ const Home = (): React.JSX.Element => {
           <span className="text-emerald-400 text-xs">直播中</span>
         </div>
         <div className="flex gap-3 overflow-x-auto pb-1 scrollbar-none">
-          {recentHabits.length === 0 && (
+          {latestRecentHabits.length === 0 && (
             <span className="text-zinc-600 text-xs py-1">尚無動態，新增第一個習慣後就會出現！</span>
           )}
-          {recentHabits.map(item => {
+          {latestRecentHabits.map(item => {
             const drive = drives.find(d => d.id === item.driveType)
             return (
               <div

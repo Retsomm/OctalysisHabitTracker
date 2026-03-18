@@ -46,6 +46,8 @@ const Explore = (): React.JSX.Element => {
   const { data: leaderboard = [] } = useGetLeaderboardQuery()
   const { data: activityFeed = [] } = useGetActivityQuery()
   const { data: trendingDrives = [] } = useGetTrendingDrivesQuery()
+  const topLeaderboard = leaderboard.slice(0, 10)
+  const latestActivityFeed = activityFeed.slice(0, 5)
 
   const [searchQuery, setSearchQuery] = useState('')
   const [debouncedQuery, setDebouncedQuery] = useState('')
@@ -165,7 +167,7 @@ const Explore = (): React.JSX.Element => {
           <div>
             <h3 className="text-white font-bold text-base mb-3">社群動態</h3>
             <div className="space-y-3">
-              {activityFeed.map(item => {
+              {latestActivityFeed.map(item => {
                 const drive = drives.find(d => d.id === item.driveType)
                 return (
                   <div
@@ -201,7 +203,7 @@ const Explore = (): React.JSX.Element => {
           <div>
             <h3 className="text-white font-bold text-base mb-3">社群精英</h3>
             <div className="grid grid-cols-2 gap-3">
-              {leaderboard.map((lu, index) => {
+              {topLeaderboard.map((lu, index) => {
                 const medals = ['🥇', '🥈', '🥉']
                 return (
                   <div

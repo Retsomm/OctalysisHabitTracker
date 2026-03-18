@@ -33,7 +33,7 @@ const GoogleCallback = (): React.JSX.Element => {
       }
 
       try {
-        const redirectUri = `${window.location.origin}/auth/callback/google`
+        const redirectUri = import.meta.env.VITE_GOOGLE_REDIRECT_URI as string
         const result = await fetch('/api/backend/auth/google', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },

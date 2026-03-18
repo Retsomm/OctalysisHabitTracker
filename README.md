@@ -38,12 +38,7 @@ cp frontend/.env.example frontend/.env
 
 3. **安裝依賴**
 ```bash
-# 後端依賴
-cd backend
-yarn install
-
-# 前端依賴
-cd ../frontend
+# 在根目錄一次安裝前後端依賴
 yarn install
 ```
 
@@ -56,14 +51,12 @@ yarn db:generate
 
 5. **啟動開發服務器**
 ```bash
-# 啟動後端 (端口 3001)
-cd backend
-yarn dev
-
-# 啟動前端 (端口 5173)
-cd frontend
+# 在根目錄同時啟動後端、前端
 yarn dev
 ```
+
+> `yarn dev` 會同時啟動後端（3001）與前端（5173）。
+> 資料庫使用你在 `backend/.env` 設定的 `DATABASE_URL` / `DIRECT_URL`（例如 Supabase）。
 
 ## 📦 構建與部署
 
