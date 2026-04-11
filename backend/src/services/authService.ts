@@ -1,9 +1,7 @@
-import { PrismaClient } from '@prisma/client'
+import prisma from '../lib/prisma.js'
 import jwt from 'jsonwebtoken'
 import { randomUUID } from 'crypto'
 import { AuthUser, JwtPayload } from '../types/index.js'
-
-const prisma = new PrismaClient()
 
 const generateToken = (userId: string): string => {
   const secret = process.env.JWT_SECRET
