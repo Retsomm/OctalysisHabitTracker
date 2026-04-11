@@ -16,12 +16,15 @@ export const getHabits = async (req: Request, res: Response): Promise<void> => {
 export const createHabit = async (req: Request, res: Response): Promise<void> => {
   try {
     const userId = req.user!.id
-    const { title, description, driveType, frequency, xp } = req.body as {
+    const { title, description, driveType, frequency, xp, imageUrl, reminderTime, projectIds } = req.body as {
       title: string
       description: string
       driveType: DriveType
       frequency: 'daily' | 'weekly'
       xp: number
+      imageUrl?: string | null
+      reminderTime?: string | null
+      projectIds?: string[]
     }
 
     if (!title || !driveType || !frequency) {
@@ -35,6 +38,9 @@ export const createHabit = async (req: Request, res: Response): Promise<void> =>
       driveType,
       frequency,
       xp: xp ?? 10,
+      imageUrl: imageUrl ?? null,
+      reminderTime: reminderTime ?? null,
+      projectIds: projectIds ?? [],
     })
     res.status(201).json(habit)
   } catch (err) {

@@ -1,12 +1,10 @@
-import { PrismaClient } from '@prisma/client'
+import prisma from '../lib/prisma.js'
 import { User, LeaderboardUser, ActivityItem, DriveType, ACHIEVEMENTS } from '../types/index.js'
 
 export interface TrendingDrive {
   driveType: DriveType
   count: number
 }
-
-const prisma = new PrismaClient()
 
 export const getUserProfile = async (userId: string): Promise<User> => {
   const user = await prisma.user.findUniqueOrThrow({
@@ -157,6 +155,9 @@ export interface FeedHabit {
   frequency: 'daily' | 'weekly'
   streak: number
   xp: number
+  imageUrl: string | null
+  reminderTime: string | null
+  projects: { id: string; name: string }[]
   createdAt: string
   userId: string
   username: string
@@ -197,6 +198,7 @@ export const getFeedHabits = async (): Promise<FeedHabit[]> => {
         where: { completedAt: { gte: thirtyDaysAgo } },
         orderBy: { completedAt: 'desc' },
       },
+      projects: { include: { project: true } },
     },
   })
 
@@ -225,6 +227,9 @@ export const getFeedHabits = async (): Promise<FeedHabit[]> => {
       frequency: habit.frequency as 'daily' | 'weekly',
       streak: habit.streak,
       xp: habit.xp,
+      imageUrl: habit.imageUrl ?? null,
+      reminderTime: habit.reminderTime ?? null,
+      projects: habit.projects.map(hp => ({ id: hp.project.id, name: hp.project.name })),
       createdAt: habit.createdAt.toISOString(),
       userId: habit.userId,
       username: habit.user.username,

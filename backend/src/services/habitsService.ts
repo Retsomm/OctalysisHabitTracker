@@ -1,7 +1,5 @@
-import { PrismaClient } from '@prisma/client'
-import { Habit, DriveType, ACHIEVEMENTS } from '../types/index.js'
-
-const prisma = new PrismaClient()
+import prisma from '../lib/prisma.js'
+import { Habit, Project, DriveType, ACHIEVEMENTS } from '../types/index.js'
 
 const getTodayRange = (): { start: Date; end: Date } => {
   const start = new Date()
@@ -98,8 +96,11 @@ const toHabit = (
     frequency: string
     streak: number
     xp: number
+    imageUrl: string | null
+    reminderTime: string | null
     createdAt: Date
     completions: { completedAt: Date }[]
+    projects?: { project: { id: string; userId: string; name: string; createdAt: Date } }[]
   },
   completed: boolean
 ): Habit => ({
@@ -112,13 +113,24 @@ const toHabit = (
   completed,
   completedDates: habit.completions.map(c => c.completedAt.toISOString().split('T')[0]),
   xp: habit.xp,
+  imageUrl: habit.imageUrl ?? null,
+  reminderTime: habit.reminderTime ?? null,
+  projects: (habit.projects ?? []).map(hp => ({
+    id: hp.project.id,
+    userId: hp.project.userId,
+    name: hp.project.name,
+    createdAt: hp.project.createdAt.toISOString(),
+  })) as Project[],
   createdAt: habit.createdAt.toISOString(),
 })
 
 export const getHabits = async (userId: string): Promise<Habit[]> => {
   const habits = await prisma.habit.findMany({
     where: { userId },
-    include: { completions: { orderBy: { completedAt: 'asc' } } },
+    include: {
+      completions: { orderBy: { completedAt: 'asc' } },
+      projects: { include: { project: true } },
+    },
     orderBy: { createdAt: 'asc' },
   })
 
@@ -142,7 +154,16 @@ export const getHabits = async (userId: string): Promise<Habit[]> => {
 
 export const createHabit = async (
   userId: string,
-  data: { title: string; description: string; driveType: DriveType; frequency: 'daily' | 'weekly'; xp: number }
+  data: {
+    title: string
+    description: string
+    driveType: DriveType
+    frequency: 'daily' | 'weekly'
+    xp: number
+    imageUrl?: string | null
+    reminderTime?: string | null
+    projectIds?: string[]
+  }
 ): Promise<Habit> => {
   const habit = await prisma.habit.create({
     data: {
@@ -152,8 +173,16 @@ export const createHabit = async (
       driveType: data.driveType,
       frequency: data.frequency,
       xp: data.xp,
+      imageUrl: data.imageUrl ?? null,
+      reminderTime: data.reminderTime ?? null,
+      projects: data.projectIds?.length
+        ? { create: data.projectIds.map(projectId => ({ projectId })) }
+        : undefined,
     },
-    include: { completions: true },
+    include: {
+      completions: true,
+      projects: { include: { project: true } },
+    },
   })
 
   await checkAndAwardAchievements(userId)
@@ -170,11 +199,14 @@ export const deleteHabit = async (userId: string, habitId: string): Promise<void
 export const updateHabit = async (
   userId: string,
   habitId: string,
-  updates: Partial<{ title: string; description: string; driveType: DriveType; frequency: 'daily' | 'weekly'; xp: number; completed?: boolean }>
+  updates: Partial<{ title: string; description: string; driveType: DriveType; frequency: 'daily' | 'weekly'; xp: number; completed?: boolean; imageUrl?: string | null; reminderTime?: string | null; projectIds?: string[] }>
 ): Promise<Habit> => {
   const habit = await prisma.habit.findFirst({
     where: { id: habitId, userId },
-    include: { completions: { orderBy: { completedAt: 'asc' } } },
+    include: {
+      completions: { orderBy: { completedAt: 'asc' } },
+      projects: { include: { project: true } },
+    },
   })
   if (!habit) throw new Error('Habit not found')
 
@@ -204,7 +236,10 @@ export const updateHabit = async (
 
       const updatedHabit = await prisma.habit.findUniqueOrThrow({
         where: { id: habitId },
-        include: { completions: { orderBy: { completedAt: 'asc' } } },
+        include: {
+          completions: { orderBy: { completedAt: 'asc' } },
+          projects: { include: { project: true } },
+        },
       })
 
       const newStreak = calculateStreak(updatedHabit.completions.map(c => c.completedAt), habit.frequency)
@@ -238,7 +273,10 @@ export const updateHabit = async (
 
       const updatedHabit = await prisma.habit.findUniqueOrThrow({
         where: { id: habitId },
-        include: { completions: { orderBy: { completedAt: 'asc' } } },
+        include: {
+          completions: { orderBy: { completedAt: 'asc' } },
+          projects: { include: { project: true } },
+        },
       })
 
       const newStreak = calculateStreak(updatedHabit.completions.map(c => c.completedAt), habit.frequency)
@@ -251,11 +289,25 @@ export const updateHabit = async (
     delete updates.completed
   }
 
+  // 處理專案關聯更新
+  const { projectIds, completed: _c, ...fieldUpdates } = updates
+  if (projectIds !== undefined) {
+    await prisma.habitProject.deleteMany({ where: { habitId } })
+    if (projectIds.length > 0) {
+      await prisma.habitProject.createMany({
+        data: projectIds.map(projectId => ({ habitId, projectId })),
+      })
+    }
+  }
+
   // 處理一般欄位的更新（如標題、描述等）
   const updatedHabit = await prisma.habit.update({
     where: { id: habitId },
-    data: updates,
-    include: { completions: { orderBy: { completedAt: 'asc' } } },
+    data: fieldUpdates,
+    include: {
+      completions: { orderBy: { completedAt: 'asc' } },
+      projects: { include: { project: true } },
+    },
   })
 
   // 判斷當前是否已完成以回傳正確的 Habit 物件

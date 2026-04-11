@@ -4,6 +4,7 @@ import cors from 'cors'
 import authRoutes from './routes/auth.js'
 import habitsRoutes from './routes/habits.js'
 import userRoutes from './routes/user.js'
+import projectsRoutes from './routes/projects.js'
 
 const app = express()
 
@@ -24,7 +25,7 @@ app.use(cors({
   credentials: true
 }))
 
-app.use(express.json())
+app.use(express.json({ limit: '10mb' }))
 
 // X OAuth callback relay (X redirects here, we forward to frontend)
 app.get('/auth/callback/x', (req: Request, res: Response) => {
@@ -37,6 +38,7 @@ app.get('/auth/callback/x', (req: Request, res: Response) => {
 app.use('/api/auth', authRoutes)
 app.use('/api/habits', habitsRoutes)
 app.use('/api/user', userRoutes)
+app.use('/api/projects', projectsRoutes)
 
 app.use((err: unknown, _req: Request, res: Response, _next: NextFunction) => {
   const message = err instanceof Error ? err.message : 'Internal server error'
