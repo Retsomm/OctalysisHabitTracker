@@ -1,13 +1,13 @@
 import React, { useState, useRef } from 'react'
-import { useAppSelector, useAppDispatch } from '../store/hooks'
-import { logout } from '../store/authSlice'
+import { useAppSelector, useAppDispatch } from '@/store/hooks'
+import { logout } from '@/store/authSlice'
 import { googleLogout } from '@react-oauth/google'
-import { useGetUserProfileQuery, useGetHabitsQuery, useUpdateProfileMutation } from '../store/api'
-import { drives } from '../constants/drives'
-import { ACHIEVEMENTS } from '../types'
-import XpBar from '../components/common/XpBar'
-import StreakBadge from '../components/common/StreakBadge'
-import type { DriveType } from '../types'
+import { useGetUserProfileQuery, useGetHabitsQuery, useUpdateProfileMutation } from '@/store/api'
+import { drives } from '@/constants/drives'
+import { ACHIEVEMENTS } from '@/types'
+import XpBar from '@/components/common/XpBar'
+import StreakBadge from '@/components/common/StreakBadge'
+import type { DriveType } from '@/types'
 
 const resizeImageToBase64 = (file: File, maxSize = 256): Promise<string> =>
   new Promise((resolve, reject) => {

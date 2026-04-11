@@ -1,10 +1,11 @@
 import React from 'react'
-import { useAppDispatch, useAppSelector } from '../../store/hooks'
-import { setFilter } from '../../store/habitsSlice'
-import { useGetFeedHabitsQuery } from '../../store/api'
-import { drives } from '../../constants/drives'
-import type { DriveType } from '../../types'
+import { useAppDispatch, useAppSelector } from '@/store/hooks'
+import { setFilter } from '@/store/habitsSlice'
+import { useGetFeedHabitsQuery } from '@/store/api'
+import { drives } from '@/constants/drives'
+import type { DriveType } from '@/types'
 import HabitCard from './HabitCard'
+import { HabitFeedSkeleton } from '@/components/common/SkeletonCard'
 
 type FilterValue = 'all' | 'daily' | 'weekly' | DriveType
 
@@ -22,8 +23,11 @@ const staticTabs: FilterTab[] = [
 
 const HabitFeed = (): React.JSX.Element => {
   const dispatch = useAppDispatch()
-  const { data: habits = [], isLoading } = useGetFeedHabitsQuery()
+  const { data: habits, isLoading, isFetching } = useGetFeedHabitsQuery()
   const { filter } = useAppSelector(state => state.habits)
+
+  const habitList = habits ?? []
+  const showSkeleton = isLoading && !habits
 
   const driveTabs: FilterTab[] = drives.map(d => ({
     value: d.id as FilterValue,
@@ -33,7 +37,7 @@ const HabitFeed = (): React.JSX.Element => {
 
   const allTabs = [...staticTabs, ...driveTabs]
 
-  const filteredHabits = habits.filter(h => {
+  const filteredHabits = habitList.filter(h => {
     if (filter === 'all') return true
     if (filter === 'daily') return h.frequency === 'daily'
     if (filter === 'weekly') return h.frequency === 'weekly'
@@ -91,14 +95,9 @@ const HabitFeed = (): React.JSX.Element => {
 
       {/* Habit list */}
       <div>
-        {isLoading ? (
-          <div className="flex items-center justify-center py-20">
-            <svg className="animate-spin w-6 h-6 text-zinc-500" viewBox="0 0 24 24" fill="none">
-              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-            </svg>
-          </div>
-        ) : filteredHabits.length === 0 ? (
+        {showSkeleton ? (
+          <HabitFeedSkeleton />
+        ) : filteredHabits.length === 0 && !isFetching ? (
           <div className="flex flex-col items-center justify-center py-20 text-center px-8">
             <div className="text-6xl mb-4">🌱</div>
             <h3 className="text-white font-semibold text-lg mb-2">尚無習慣</h3>

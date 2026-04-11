@@ -1,16 +1,22 @@
 import React from 'react'
-import { drives } from '../../constants/drives'
-import { useGetUserProfileQuery, useGetLeaderboardQuery } from '../../store/api'
-import { ACHIEVEMENTS } from '../../types'
-import { TrophyIcon, MedalIcon, TargetIcon } from '../common/Icons'
+import { drives } from '@/constants/drives'
+import { useGetUserProfileQuery, useGetLeaderboardQuery } from '@/store/api'
+import { ACHIEVEMENTS } from '@/types'
+import { TrophyIcon, MedalIcon, TargetIcon } from '@/components/common/Icons'
 
 const RightPanel = (): React.JSX.Element => {
-  const { data: profile } = useGetUserProfileQuery()
+  const { id: myId, achievements, driveScores } = useGetUserProfileQuery(undefined, {
+    selectFromResult: ({ data }) => ({
+      id: data?.id,
+      achievements: data?.achievements,
+      driveScores: data?.driveScores,
+    }),
+  })
   const { data: leaderboard = [] } = useGetLeaderboardQuery()
   const topLeaderboard = leaderboard.slice(0, 10)
 
   const allAchievements = ACHIEVEMENTS.map(a => {
-    const earned = profile?.achievements.find(ea => ea.id === a.id)
+    const earned = achievements?.find(ea => ea.id === a.id)
     return { ...a, earned: !!earned, earnedAt: earned?.earnedAt }
   })
 
@@ -27,7 +33,7 @@ const RightPanel = (): React.JSX.Element => {
         ) : (
           <div className="space-y-2">
             {topLeaderboard.map((lu, index) => {
-              const isMe = lu.id === profile?.id
+              const isMe = lu.id === myId
               const medals = ['🥇', '🥈', '🥉']
               const rankIcon = index < 3 ? medals[index] : `${index + 1}`
               return (
@@ -105,7 +111,7 @@ const RightPanel = (): React.JSX.Element => {
         </h3>
         <div className="space-y-2">
           {drives.map(drive => {
-            const score = profile?.driveScores?.[drive.id] ?? 0
+            const score = driveScores?.[drive.id] ?? 0
             return (
               <div key={drive.id} className="flex items-center gap-2">
                 <span className={`text-xs font-semibold w-4 ${drive.color}`}>{drive.id}</span>

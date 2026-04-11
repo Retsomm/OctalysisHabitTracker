@@ -1,10 +1,10 @@
 import React from 'react'
 import { NavLink } from 'react-router-dom'
 import { googleLogout } from '@react-oauth/google'
-import { useAppSelector, useAppDispatch } from '../../store/hooks'
-import { logout } from '../../store/authSlice'
-import { useGetUserProfileQuery, api } from '../../store/api'
-import { HomeIcon, BarChartIcon, CompassIcon, UserIcon } from '../common/Icons'
+import { useAppSelector, useAppDispatch } from '@/store/hooks'
+import { logout } from '@/store/authSlice'
+import { useGetUserProfileQuery, api } from '@/store/api'
+import { HomeIcon, BarChartIcon, CompassIcon, UserIcon } from '@/components/common/Icons'
 
 const OctagonLogo = (): React.JSX.Element => (
   <svg width="36" height="36" viewBox="0 0 36 36" fill="none">

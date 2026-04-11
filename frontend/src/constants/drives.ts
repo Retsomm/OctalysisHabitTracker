@@ -1,4 +1,4 @@
-import type { Drive } from '../types'
+import type { Drive } from '@/types'
 
 export const drives: Drive[] = [
   {

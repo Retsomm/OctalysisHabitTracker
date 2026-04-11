@@ -1,10 +1,11 @@
 import React, { useState } from 'react'
-import { useGetUserProfileQuery, useGetHabitsQuery } from '../store/api'
-import { drives } from '../constants/drives'
-import OctalysisChart from '../components/octalysis/OctalysisChart'
-import DriveCard from '../components/octalysis/DriveCard'
-import XpBar from '../components/common/XpBar'
-import type { Drive, DriveType } from '../types'
+import { useGetUserProfileQuery, useGetHabitsQuery } from '@/store/api'
+import { drives } from '@/constants/drives'
+import OctalysisChart from '@/components/octalysis/OctalysisChart'
+import DriveCard from '@/components/octalysis/DriveCard'
+import XpBar from '@/components/common/XpBar'
+import { DashboardSkeleton } from '@/components/common/SkeletonCard'
+import type { Drive, DriveType } from '@/types'
 
 type JourneyStage = 'discovery' | 'onboarding' | 'scaffolding' | 'endgame'
 
@@ -149,7 +150,8 @@ const DriveModal = ({ drive, score, onClose }: DriveModalProps): React.JSX.Eleme
 
 const Dashboard = (): React.JSX.Element => {
   const { data: profile, isLoading: profileLoading } = useGetUserProfileQuery()
-  const { data: habits = [] } = useGetHabitsQuery()
+  const { data: habits } = useGetHabitsQuery()
+  const habitList = habits ?? []
   const [selectedDrive, setSelectedDrive] = useState<Drive | null>(null)
 
   const getCurrentStage = (level: number): JourneyStage => {
@@ -164,23 +166,18 @@ const Dashboard = (): React.JSX.Element => {
   const currentStageIndex = journeySteps.findIndex(s => s.key === currentStage)
 
   const habitCountByDrive = (driveId: DriveType): number =>
-    habits.filter(h => h.driveType === driveId).length
+    habitList.filter(h => h.driveType === driveId).length
 
-  const totalXpEarned = habits.reduce((sum, h) => sum + (h.completed ? h.xp : 0), 0)
-  const completedHabits = habits.filter(h => h.completed).length
+  const totalXpEarned = habitList.reduce((sum, h) => sum + (h.completed ? h.xp : 0), 0)
+  const completedHabits = habitList.filter(h => h.completed).length
 
-  if (profileLoading) {
+  if (profileLoading && !profile) {
     return (
       <div>
         <div className="sticky top-0 bg-zinc-950/90 backdrop-blur-md border-b border-zinc-800 z-20 px-4 py-3">
           <h1 className="text-white font-bold text-xl">儀表板</h1>
         </div>
-        <div className="flex items-center justify-center py-20">
-          <svg className="animate-spin w-6 h-6 text-zinc-500" viewBox="0 0 24 24" fill="none">
-            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-          </svg>
-        </div>
+        <DashboardSkeleton />
       </div>
     )
   }
@@ -213,7 +210,7 @@ const Dashboard = (): React.JSX.Element => {
               <p className="text-zinc-500 text-sm">{profile?.username ?? ''}</p>
               <div className="flex items-center gap-3 mt-1 flex-wrap">
                 <span className="text-zinc-400 text-xs">🔥 {profile?.totalStreak ?? 0} 天連勝</span>
-                <span className="text-zinc-400 text-xs">⚡ {completedHabits}/{habits.length} 完成</span>
+                <span className="text-zinc-400 text-xs">⚡ {completedHabits}/{habitList.length} 完成</span>
                 <span className="text-amber-400 text-xs font-semibold">+{totalXpEarned} XP 今日</span>
               </div>
             </div>
@@ -224,7 +221,7 @@ const Dashboard = (): React.JSX.Element => {
         {/* Stats Grid */}
         <div className="grid grid-cols-3 gap-3">
           {[
-            { label: '總習慣', value: habits.length, color: 'text-blue-400' },
+            { label: '總習慣', value: habitList.length, color: 'text-blue-400' },
             { label: '最長連勝', value: `${profile?.totalStreak ?? 0}天`, color: 'text-orange-400' },
             { label: '總XP', value: (profile?.xp ?? 0).toLocaleString(), color: 'text-amber-400' },
           ].map(stat => (

@@ -1,8 +1,8 @@
 import React from 'react'
-import CreateHabit from '../components/habits/CreateHabit'
-import HabitFeed from '../components/habits/HabitFeed'
-import { drives } from '../constants/drives'
-import { useGetRecentHabitsQuery } from '../store/api'
+import CreateHabit from '@/components/habits/CreateHabit'
+import HabitFeed from '@/components/habits/HabitFeed'
+import { drives } from '@/constants/drives'
+import { useGetRecentHabitsQuery } from '@/store/api'
 
 const Home = (): React.JSX.Element => {
   const { data: recentHabits = [] } = useGetRecentHabitsQuery()

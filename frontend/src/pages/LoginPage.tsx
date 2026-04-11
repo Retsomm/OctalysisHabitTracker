@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
-import { useAppDispatch } from '../store/hooks'
-import { loginSuccess } from '../store/authSlice'
-import { api } from '../store/api'
-import { useLoginGuestMutation } from '../store/api'
+import { useAppDispatch } from '@/store/hooks'
+import { loginSuccess } from '@/store/authSlice'
+import { api } from '@/store/api'
+import { useLoginGuestMutation } from '@/store/api'
 
 const OctagonLogo = (): React.JSX.Element => (
   <svg width="56" height="56" viewBox="0 0 36 36" fill="none">

@@ -1,9 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { useAppDispatch } from '../store/hooks'
-import { loginSuccess } from '../store/authSlice'
-import { api } from '../store/api'
-import type { AuthUser } from '../types'
+import { useAppDispatch } from '@/store/hooks'
+import { loginSuccess } from '@/store/authSlice'
+import { api } from '@/store/api'
+import type { AuthUser } from '@/types'
 
 const GoogleCallback = (): React.JSX.Element => {
   const navigate = useNavigate()

@@ -1,5 +1,5 @@
 import React from 'react'
-import type { Drive } from '../../types'
+import type { Drive } from '@/types'
 
 interface DriveCardProps {
   drive: Drive

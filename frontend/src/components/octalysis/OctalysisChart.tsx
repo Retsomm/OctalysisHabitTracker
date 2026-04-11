@@ -1,6 +1,6 @@
 import React from 'react'
 import { useEffect, useState } from 'react'
-import type { DriveType } from '../../types'
+import type { DriveType } from '@/types'
 
 interface OctalysisChartProps {
   scores: Record<DriveType, number>

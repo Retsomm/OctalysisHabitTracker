@@ -1,10 +1,10 @@
 import React, { useEffect } from 'react'
-import { useGetPublicProfileQuery, useGetPublicHabitsQuery } from '../../store/api'
-import { drives } from '../../constants/drives'
-import { ACHIEVEMENTS } from '../../types'
+import { useGetPublicProfileQuery, useGetPublicHabitsQuery } from '@/store/api'
+import { drives } from '@/constants/drives'
+import { ACHIEVEMENTS } from '@/types'
 import XpBar from './XpBar'
 import StreakBadge from './StreakBadge'
-import type { DriveType } from '../../types'
+import type { DriveType } from '@/types'
 
 interface UserProfileModalProps {
   userId: string

@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react'
-import { drives } from '../constants/drives'
-import { useGetLeaderboardQuery, useGetActivityQuery, useSearchUsersQuery, useGetTrendingDrivesQuery } from '../store/api'
-import { SearchIcon } from '../components/common/Icons'
-import UserProfileModal from '../components/common/UserProfileModal'
+import { drives } from '@/constants/drives'
+import { useGetLeaderboardQuery, useGetActivityQuery, useSearchUsersQuery, useGetTrendingDrivesQuery } from '@/store/api'
+import { SearchIcon } from '@/components/common/Icons'
+import UserProfileModal from '@/components/common/UserProfileModal'
 
 const formatTimestamp = (ts: string): string => {
   const diff = Date.now() - new Date(ts).getTime()

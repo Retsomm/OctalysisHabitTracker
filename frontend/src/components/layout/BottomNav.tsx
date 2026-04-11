@@ -1,6 +1,6 @@
 import React from 'react'
 import { NavLink } from 'react-router-dom'
-import { HomeIcon, BarChartIcon, CompassIcon, UserIcon } from '../common/Icons'
+import { HomeIcon, BarChartIcon, CompassIcon, UserIcon } from '@/components/common/Icons'
 
 interface NavItem {
   path: string
