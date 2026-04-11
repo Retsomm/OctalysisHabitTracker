@@ -1,5 +1,12 @@
 export type DriveType = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8
 
+export interface Project {
+  id: string
+  userId: string
+  name: string
+  createdAt: string
+}
+
 export interface Habit {
   id: string
   title: string
@@ -10,6 +17,9 @@ export interface Habit {
   completed: boolean
   completedDates: string[]
   xp: number
+  imageUrl: string | null
+  reminderTime: string | null
+  projects: Project[]
   createdAt: string
 }
 
@@ -65,6 +75,9 @@ export interface FeedHabit {
   frequency: 'daily' | 'weekly'
   streak: number
   xp: number
+  imageUrl: string | null
+  reminderTime: string | null
+  projects: { id: string; name: string }[]
   createdAt: string
   userId: string
   username: string

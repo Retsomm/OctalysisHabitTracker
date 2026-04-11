@@ -1,5 +1,5 @@
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit'
-import type { DriveType } from '../types'
+import type { DriveType } from '@/types'
 
 type FilterType = 'all' | 'daily' | 'weekly' | DriveType
 
