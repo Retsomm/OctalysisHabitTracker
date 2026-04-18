@@ -5,6 +5,7 @@ import OctalysisChart from '@/components/octalysis/OctalysisChart'
 import DriveCard from '@/components/octalysis/DriveCard'
 import XpBar from '@/components/common/XpBar'
 import { DashboardSkeleton } from '@/components/common/SkeletonCard'
+import { FireIcon, BoltIcon, SproutIcon, RocketIcon, CrownIcon } from '@/components/common/Icons'
 import type { Drive, DriveType } from '@/types'
 
 type JourneyStage = 'discovery' | 'onboarding' | 'scaffolding' | 'endgame'
@@ -14,14 +15,14 @@ interface JourneyStep {
   label: string
   description: string
   minLevel: number
-  icon: string
+  icon: React.ReactNode
 }
 
 const journeySteps: JourneyStep[] = [
-  { key: 'discovery', label: '探索期', description: '了解八角框架', minLevel: 1, icon: '🌱' },
-  { key: 'onboarding', label: '入門期', description: '建立基礎習慣', minLevel: 5, icon: '🚀' },
-  { key: 'scaffolding', label: '成長期', description: '深化習慣系統', minLevel: 10, icon: '⚡' },
-  { key: 'endgame', label: '精通期', description: '成為習慣大師', minLevel: 20, icon: '👑' },
+  { key: 'discovery', label: '探索期', description: '了解八角框架', minLevel: 1, icon: <SproutIcon size={18} /> },
+  { key: 'onboarding', label: '入門期', description: '建立基礎習慣', minLevel: 5, icon: <RocketIcon size={18} /> },
+  { key: 'scaffolding', label: '成長期', description: '深化習慣系統', minLevel: 10, icon: <BoltIcon size={18} /> },
+  { key: 'endgame', label: '精通期', description: '成為習慣大師', minLevel: 20, icon: <CrownIcon size={18} /> },
 ]
 
 const driveDetails: Record<number, { intro: string; examples: string[]; whiteHat: boolean }> = {
@@ -67,6 +68,16 @@ const driveDetails: Record<number, { intro: string; examples: string[]; whiteHat
   },
 }
 
+const driveHexColors: Record<number, string> = {
+  1: '#6b4a5e', 2: '#a87625', 3: '#4d5a3a', 4: '#3a4a5c',
+  5: '#6b4a5e', 6: '#b7552e', 7: '#3a4a5c', 8: '#b7552e',
+}
+
+const driveHexSoftColors: Record<number, string> = {
+  1: '#e0d0d8', 2: '#ecdcc0', 3: '#d9dcc6', 4: '#cdd4dc',
+  5: '#e0d0d8', 6: '#e8d6c6', 7: '#cdd4dc', 8: '#e8d6c6',
+}
+
 interface DriveModalProps {
   drive: Drive
   score: number
@@ -75,71 +86,76 @@ interface DriveModalProps {
 
 const DriveModal = ({ drive, score, onClose }: DriveModalProps): React.JSX.Element => {
   const details = driveDetails[drive.id]
-  const driveSymbols: Record<number, string> = { 1: '✦', 2: '◈', 3: '◎', 4: '◆', 5: '◉', 6: '◑', 7: '◐', 8: '◗' }
-  const symbol = driveSymbols[drive.id] ?? '✦'
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-ink-1/40 backdrop-blur-sm"
       onClick={onClose}
     >
       <div
-        className={`w-full max-w-md rounded-3xl border p-6 ${drive.bgColor} ${drive.borderColor} bg-zinc-950`}
+        className="w-full max-w-md rounded-[22px] border border-line bg-card p-6 shadow-xl"
         onClick={e => e.stopPropagation()}
       >
-        {/* Header */}
         <div className="flex items-center justify-between mb-5">
           <div className="flex items-center gap-3">
-            <div className={`w-12 h-12 rounded-2xl flex items-center justify-center text-2xl font-bold border ${drive.bgColor} ${drive.borderColor} ${drive.color}`}>
-              {symbol}
+            <div
+              className="w-12 h-12 rounded-[14px] flex items-center justify-center text-xl font-bold border"
+              style={{ background: driveHexSoftColors[drive.id], borderColor: `${driveHexColors[drive.id]}30`, color: driveHexColors[drive.id] }}
+            >
+              {drive.id}
             </div>
             <div>
-              <div className={`text-xs font-semibold ${drive.color}`}>Drive #{drive.id} · {details.whiteHat ? '白帽' : '黑帽'}</div>
-              <h2 className="text-white font-bold text-lg leading-tight">{drive.chineseName}</h2>
-              <div className="text-zinc-500 text-xs">{drive.name}</div>
+              <div className="font-mono text-[12px] tracking-[0.1em] uppercase" style={{ color: driveHexColors[drive.id] }}>
+                Drive #{drive.id} · {details.whiteHat ? '白帽' : '黑帽'}
+              </div>
+              <h2 className="font-serif text-xl text-ink-1 leading-tight">{drive.chineseName}</h2>
+              <div className="text-ink-4 text-sm font-mono">{drive.name}</div>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="text-zinc-500 hover:text-white transition-colors text-xl leading-none cursor-pointer"
+            className="text-ink-4 hover:text-ink-1 transition-colors text-xl leading-none cursor-pointer w-8 h-8 flex items-center justify-center rounded-full hover:bg-line-2"
           >
-            ✕
+            ×
           </button>
         </div>
 
-        {/* Score bar */}
         <div className="mb-5">
-          <div className="flex justify-between text-xs mb-1.5">
-            <span className="text-zinc-500">你的活躍度</span>
-            <span className={`font-bold ${drive.color}`}>{score}%</span>
+          <div className="flex justify-between text-sm mb-1.5">
+            <span className="text-ink-4 font-mono">你的活躍度</span>
+            <span className="font-bold font-mono" style={{ color: driveHexColors[drive.id] }}>{score}%</span>
           </div>
-          <div className="h-2 bg-zinc-800 rounded-full overflow-hidden">
+          <div className="h-[6px] bg-line-2 rounded-full overflow-hidden">
             <div
-              className={`h-full rounded-full transition-all duration-700 ${drive.barColor}`}
-              style={{ width: `${score}%` }}
+              className="h-full rounded-full transition-all duration-700"
+              style={{ width: `${score}%`, background: driveHexColors[drive.id] }}
             />
           </div>
         </div>
 
-        {/* Intro */}
-        <p className="text-zinc-300 text-sm leading-relaxed mb-5">{details.intro}</p>
+        <p className="text-ink-2 text-sm leading-relaxed mb-5">{details.intro}</p>
 
-        {/* Examples */}
         <div>
-          <div className="text-zinc-500 text-xs font-semibold uppercase tracking-wider mb-2">習慣範例</div>
+          <div className="text-ink-4 text-sm font-mono uppercase tracking-widest mb-2">習慣範例</div>
           <div className="space-y-2">
             {details.examples.map((example, i) => (
-              <div key={i} className={`flex items-center gap-2 text-sm ${drive.color}`}>
-                <span className="text-xs opacity-60">{i + 1}.</span>
-                <span className="text-zinc-300">{example}</span>
+              <div key={i} className="flex items-center gap-2 text-sm">
+                <span className="font-mono text-sm text-ink-4">{i + 1}.</span>
+                <span className="text-ink-2">{example}</span>
               </div>
             ))}
           </div>
         </div>
 
-        {/* Tag */}
-        <div className="mt-5 pt-4 border-t border-zinc-800">
-          <span className={`text-xs px-3 py-1 rounded-full border font-medium ${drive.color} ${drive.bgColor} ${drive.borderColor}`}>
+        <div className="mt-5 pt-4 border-t border-line-2">
+          <span
+            className="text-sm px-3 py-1 rounded-full border font-medium font-mono"
+            style={{
+              color: driveHexColors[drive.id],
+              background: driveHexSoftColors[drive.id],
+              borderColor: `${driveHexColors[drive.id]}30`,
+            }}
+          >
             {details.whiteHat ? '✦ 白帽驅動力 — 帶來長期滿足感' : '◆ 黑帽驅動力 — 短期高效但需謹慎'}
           </span>
         </div>
@@ -174,8 +190,11 @@ const Dashboard = (): React.JSX.Element => {
   if (profileLoading && !profile) {
     return (
       <div>
-        <div className="sticky top-0 bg-zinc-950/90 backdrop-blur-md border-b border-zinc-800 z-20 px-4 py-3">
-          <h1 className="text-white font-bold text-xl">儀表板</h1>
+        <div className="sticky top-0 bg-ivory/90 backdrop-blur-md border-b border-line-2 z-20 px-6 py-4">
+          <div className="font-mono text-[13px] text-ink-4 tracking-[0.14em] uppercase flex items-center gap-2">
+            <span className="text-accent">●</span> 儀表板
+          </div>
+          <h1 className="font-serif text-[32px] text-ink-1 mt-5">你的<em className="italic text-accent">進度</em>一覽</h1>
         </div>
         <DashboardSkeleton />
       </div>
@@ -185,69 +204,106 @@ const Dashboard = (): React.JSX.Element => {
   return (
     <div>
       {/* Header */}
-      <div className="sticky top-0 bg-zinc-950/90 backdrop-blur-md border-b border-zinc-800 z-20 px-4 py-3">
-        <h1 className="text-white font-bold text-xl">儀表板</h1>
+      <div className="sticky top-0 bg-ivory/90 backdrop-blur-md border-b border-line-2 z-20 px-6 py-4">
+        <div className="font-mono text-[13px] text-ink-4 tracking-[0.14em] uppercase flex items-center gap-2">
+          <span className="text-accent">●</span>
+          儀表板 · {new Date().toLocaleDateString('zh-TW', { month: 'long', day: 'numeric' })}
+        </div>
+        <h1 className="font-serif text-[32px] leading-[1.02] text-ink-1 mt-5">你的<em className="italic text-accent">進度</em>一覽</h1>
+        <p className="text-ink-3 text-base mt-5 max-w-xl leading-relaxed">
+          Octalysis 框架將動機拆分為八種驅動力。觀察哪些正在推動你，哪些還沒被喚醒。
+        </p>
       </div>
 
-      <div className="px-4 py-6 space-y-6">
-        {/* User Level & XP */}
-        <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-5">
-          <div className="flex items-center gap-4 mb-4">
-            <div className="relative">
-              <div className="w-16 h-16 rounded-full bg-zinc-800 border-2 border-violet-500/50 flex items-center justify-center text-3xl overflow-hidden">
-                {profile?.avatar && (profile.avatar.includes('http') || profile.avatar.startsWith('data:')) ? (
-                  <img src={profile.avatar} alt={profile.displayName} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
-                ) : (
-                  <span>{(profile?.avatar && profile.avatar.length <= 10) ? profile.avatar : (profile?.displayName?.charAt(0) || '?')}</span>
-                )}
-              </div>
-              <div className="absolute -bottom-1 -right-1 bg-violet-600 text-white text-xs font-bold px-1.5 py-0.5 rounded-full border border-zinc-950">
-                {profile?.level ?? 1}
-              </div>
+      <div className="px-6 py-6 space-y-6">
+        {/* Divider */}
+        <div className="flex items-center gap-3.5 text-line">
+          <div className="flex-1 h-px bg-line" />
+          <span className="font-serif text-[18px] italic text-ink-4">I</span>
+          <div className="flex-1 h-px bg-line" />
+        </div>
+
+        {/* Hero stats */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
+          <div className="bg-card border border-line rounded-[14px] p-5 sm:col-span-1">
+            <div className="font-mono text-[13px] text-ink-4 tracking-[0.14em] uppercase">等級進度</div>
+            <div className="flex items-baseline gap-2.5 mt-1.5">
+              <div className="font-serif text-[52px] leading-[1] text-ink-1">Lv. {level}</div>
+              <div className="text-ink-3 text-sm">→ Lv. {level + 1}</div>
             </div>
-            <div className="flex-1">
-              <h2 className="text-white font-bold text-lg">{profile?.displayName ?? ''}</h2>
-              <p className="text-zinc-500 text-sm">{profile?.username ?? ''}</p>
-              <div className="flex items-center gap-3 mt-1 flex-wrap">
-                <span className="text-zinc-400 text-xs">🔥 {profile?.totalStreak ?? 0} 天連勝</span>
-                <span className="text-zinc-400 text-xs">⚡ {completedHabits}/{habitList.length} 完成</span>
-                <span className="text-amber-400 text-xs font-semibold">+{totalXpEarned} XP 今日</span>
+            <XpBar xp={profile?.xp ?? 0} xpToNextLevel={profile?.xpToNextLevel ?? 100} level={level} />
+          </div>
+          <div className="bg-card border border-line rounded-[14px] p-5">
+            <div className="font-mono text-[13px] text-ink-4 tracking-[0.14em] uppercase">連續天數</div>
+            <div className="font-serif text-[52px] leading-[1] text-ink-1 mt-1.5">
+              {profile?.totalStreak ?? 0}
+              <span className="text-[20px] text-ink-3 font-serif italic"> 天</span>
+            </div>
+            <div className="text-[12px] text-ink-3 mt-2 font-mono">最長紀錄 · {profile?.totalStreak ?? 0} 天</div>
+          </div>
+          <div className="bg-card border border-line rounded-[14px] p-5">
+            <div className="font-mono text-[13px] text-ink-4 tracking-[0.14em] uppercase">今日 XP</div>
+            <div className="font-serif text-[52px] leading-[1] text-ink-1 mt-1.5">+{totalXpEarned}</div>
+            <div className="text-[12px] text-ink-3 mt-2 font-mono">{completedHabits} / {habitList.length} 完成</div>
+          </div>
+        </div>
+
+        {/* User profile card */}
+        {profile && (
+          <div className="bg-card border border-line rounded-[14px] p-5">
+            <div className="flex items-center gap-4 mb-4">
+              <div className="relative">
+                <div className="w-16 h-16 rounded-full bg-accent-soft border-2 border-accent/30 flex items-center justify-center text-3xl overflow-hidden">
+                  {profile.avatar && (profile.avatar.includes('http') || profile.avatar.startsWith('data:')) ? (
+                    <img src={profile.avatar} alt={profile.displayName} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+                  ) : (
+                    <span className="font-serif text-2xl text-accent italic">
+                      {(profile.avatar && profile.avatar.length <= 10) ? profile.avatar : (profile.displayName?.charAt(0) || '?')}
+                    </span>
+                  )}
+                </div>
+                <div className="absolute -bottom-1 -right-1 bg-accent text-paper text-sm font-bold font-mono px-1.5 py-0.5 rounded-full border-2 border-card">
+                  {level}
+                </div>
+              </div>
+              <div className="flex-1">
+                <h2 className="font-serif text-2xl text-ink-1">{profile.displayName ?? ''}</h2>
+                <p className="text-ink-3 text-sm font-mono">{profile.username ?? ''}</p>
+                <div className="flex items-center gap-3 mt-1 flex-wrap">
+                  <span className="text-ink-3 text-sm font-mono flex items-center gap-1"><FireIcon size={13} /> {profile.totalStreak ?? 0} 天連勝</span>
+                  <span className="text-ink-3 text-sm font-mono flex items-center gap-1"><BoltIcon size={13} /> {completedHabits}/{habitList.length} 完成</span>
+                  <span className="text-warm-amber text-sm font-semibold font-mono">+{totalXpEarned} XP 今日</span>
+                </div>
               </div>
             </div>
           </div>
-          <XpBar xp={profile?.xp ?? 0} xpToNextLevel={profile?.xpToNextLevel ?? 100} level={profile?.level ?? 1} />
-        </div>
-
-        {/* Stats Grid */}
-        <div className="grid grid-cols-3 gap-3">
-          {[
-            { label: '總習慣', value: habitList.length, color: 'text-blue-400' },
-            { label: '最長連勝', value: `${profile?.totalStreak ?? 0}天`, color: 'text-orange-400' },
-            { label: '總XP', value: (profile?.xp ?? 0).toLocaleString(), color: 'text-amber-400' },
-          ].map(stat => (
-            <div key={stat.label} className="bg-zinc-900 border border-zinc-800 rounded-xl p-3 text-center">
-              <div className={`text-lg font-bold ${stat.color}`}>{stat.value}</div>
-              <div className="text-zinc-500 text-xs mt-0.5">{stat.label}</div>
-            </div>
-          ))}
-        </div>
+        )}
 
         {/* Octalysis Chart */}
         {profile?.driveScores && (
-          <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-5">
-            <h3 className="text-white font-bold text-base mb-1">八角分析雷達圖</h3>
-            <p className="text-zinc-500 text-xs mb-4">你的八大驅動力分布圖</p>
+          <div className="bg-card border border-line rounded-[14px] p-5">
+            <div className="font-mono text-[13px] text-ink-4 tracking-[0.14em] uppercase">八角分析</div>
+            <div className="font-serif text-[26px] text-ink-1 mt-1 mb-4">雷達圖</div>
             <div className="flex justify-center">
               <OctalysisChart scores={profile.driveScores} />
             </div>
           </div>
         )}
 
+        {/* Divider */}
+        <div className="flex items-center gap-3.5 text-line">
+          <div className="flex-1 h-px bg-line" />
+          <span className="font-serif text-[18px] italic text-ink-4">II</span>
+          <div className="flex-1 h-px bg-line" />
+        </div>
+
         {/* Drive Cards Grid */}
         <div>
-          <h3 className="text-white font-bold text-base mb-1">八大驅動力</h3>
-          <p className="text-zinc-500 text-xs mb-3">點擊卡片了解各驅動力介紹</p>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="font-mono text-[13px] text-ink-4 tracking-[0.14em] uppercase mb-1">八大驅動力</div>
+          <div className="font-serif text-[28px] text-ink-1 mt-1 mb-4">
+            點擊卡片了解每<em className="italic text-accent">一種動機</em>
+          </div>
+          <div className="grid grid-cols-2 gap-3.5">
             {drives.map(drive => (
               <DriveCard
                 key={drive.id}
@@ -261,14 +317,13 @@ const Dashboard = (): React.JSX.Element => {
         </div>
 
         {/* User Journey */}
-        <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-5">
-          <h3 className="text-white font-bold text-base mb-1">使用者旅程</h3>
-          <p className="text-zinc-500 text-xs mb-4">你的習慣成長階段</p>
+        <div className="bg-card border border-line rounded-[14px] p-5">
+          <div className="font-mono text-[13px] text-ink-4 tracking-[0.14em] uppercase">使用者旅程</div>
+          <div className="font-serif text-[26px] text-ink-1 mt-1 mb-4">你的習慣成長階段</div>
           <div className="relative">
-            {/* Progress line */}
-            <div className="absolute top-5 left-5 right-5 h-0.5 bg-zinc-800">
+            <div className="absolute top-5 left-5 right-5 h-px bg-line">
               <div
-                className="h-full bg-gradient-to-r from-violet-500 to-amber-500 transition-all duration-1000"
+                className="h-full bg-accent transition-all duration-1000"
                 style={{ width: `${(currentStageIndex / (journeySteps.length - 1)) * 100}%` }}
               />
             </div>
@@ -280,19 +335,19 @@ const Dashboard = (): React.JSX.Element => {
                   <div key={step.key} className="flex flex-col items-center gap-2 w-20">
                     <div className={`w-10 h-10 rounded-full flex items-center justify-center text-xl border-2 transition-all z-10 ${
                       isCurrent
-                        ? 'border-violet-500 bg-violet-500/20 shadow-lg shadow-violet-500/30'
+                        ? 'border-accent bg-accent-soft'
                         : isCompleted
-                        ? 'border-amber-500/50 bg-amber-500/10'
-                        : 'border-zinc-700 bg-zinc-900'
+                        ? 'border-warm-amber/50 bg-warm-amber-soft/50'
+                        : 'border-line bg-paper'
                     }`}>
                       {step.icon}
                     </div>
                     <div className="text-center">
-                      <div className={`text-xs font-semibold ${isCurrent ? 'text-violet-400' : isCompleted ? 'text-zinc-300' : 'text-zinc-600'}`}>
+                      <div className={`text-sm font-medium ${isCurrent ? 'text-accent' : isCompleted ? 'text-ink-2' : 'text-ink-4'}`}>
                         {step.label}
                       </div>
-                      <div className="text-zinc-600 text-xs leading-tight">{step.description}</div>
-                      <div className={`text-xs ${isCompleted ? 'text-amber-400' : 'text-zinc-700'}`}>
+                      <div className="text-ink-4 text-sm leading-tight">{step.description}</div>
+                      <div className={`text-sm font-mono ${isCompleted ? 'text-warm-amber' : 'text-ink-4'}`}>
                         Lv.{step.minLevel}+
                       </div>
                     </div>
@@ -304,7 +359,6 @@ const Dashboard = (): React.JSX.Element => {
         </div>
       </div>
 
-      {/* Drive Detail Modal */}
       {selectedDrive && (
         <DriveModal
           drive={selectedDrive}

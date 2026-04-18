@@ -1,5 +1,30 @@
 @import "tailwindcss";
 
+@theme {
+  --color-ivory: #f7f3ec;
+  --color-paper: #fbf8f2;
+  --color-card: #ffffff;
+  --color-ink-1: #1a1915;
+  --color-ink-2: #3a3832;
+  --color-ink-3: #6b6861;
+  --color-ink-4: #9b978e;
+  --color-line: #e6dfd2;
+  --color-line-2: #efe9db;
+  --color-accent: #b7552e;
+  --color-accent-soft: #e8d6c6;
+  --color-leaf: #4d5a3a;
+  --color-leaf-soft: #d9dcc6;
+  --color-dusk: #3a4a5c;
+  --color-dusk-soft: #cdd4dc;
+  --color-plum: #6b4a5e;
+  --color-plum-soft: #e0d0d8;
+  --color-warm-amber: #a87625;
+  --color-warm-amber-soft: #ecdcc0;
+  --font-serif: "Instrument Serif", "Noto Serif TC", Georgia, serif;
+  --font-geist: "Geist", "Noto Sans TC", system-ui, sans-serif;
+  --font-mono: "Geist Mono", ui-monospace, monospace;
+}
+
 @layer base {
   * {
     box-sizing: border-box;
@@ -8,9 +33,14 @@
   html, body {
     margin: 0;
     padding: 0;
-    background-color: #000;
-    color: #fff;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+    background-color: #f7f3ec;
+    color: #1a1915;
+    font-family: "Geist", "Noto Sans TC", system-ui, sans-serif;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 1.5;
+    letter-spacing: -0.003em;
+    -webkit-font-smoothing: antialiased;
     min-height: 100vh;
   }
 
@@ -25,7 +55,7 @@
     background: transparent;
   }
   ::-webkit-scrollbar-thumb {
-    background: #334155;
+    background: #e6dfd2;
     border-radius: 2px;
   }
 
@@ -35,5 +65,15 @@
   }
   .scrollbar-none::-webkit-scrollbar {
     display: none;
+  }
+
+  .font-serif {
+    font-family: "Instrument Serif", "Noto Serif TC", Georgia, serif;
+    letter-spacing: -0.01em;
+  }
+
+  .font-mono {
+    font-family: "Geist Mono", ui-monospace, monospace;
+    letter-spacing: 0;
   }
 }

@@ -4,63 +4,62 @@ import { googleLogout } from '@react-oauth/google'
 import { useAppSelector, useAppDispatch } from '@/store/hooks'
 import { logout } from '@/store/authSlice'
 import { useGetUserProfileQuery, api } from '@/store/api'
-import { HomeIcon, BarChartIcon, CompassIcon, UserIcon } from '@/components/common/Icons'
 
-const OctagonLogo = (): React.JSX.Element => (
-  <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
-    <polygon
-      points="11,2 25,2 34,11 34,25 25,34 11,34 2,25 2,11"
-      fill="none"
-      stroke="url(#logoGrad)"
-      strokeWidth="2"
-    />
-    <polygon
-      points="13,6 23,6 30,13 30,23 23,30 13,30 6,23 6,13"
-      fill="url(#logoGradFill)"
-      opacity="0.3"
-    />
-    <text x="18" y="23" textAnchor="middle" fontSize="12" fontWeight="bold" fill="white">8</text>
-    <defs>
-      <linearGradient id="logoGrad" x1="0" y1="0" x2="36" y2="36">
-        <stop offset="0%" stopColor="#8b5cf6" />
-        <stop offset="100%" stopColor="#06b6d4" />
-      </linearGradient>
-      <linearGradient id="logoGradFill" x1="0" y1="0" x2="36" y2="36">
-        <stop offset="0%" stopColor="#8b5cf6" />
-        <stop offset="100%" stopColor="#06b6d4" />
-      </linearGradient>
-    </defs>
-  </svg>
-)
+const navItems = [
+  {
+    path: '/',
+    label: '習慣',
+    icon: (
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.4">
+        <path d="M2.5 8.5l2 2 3-3 3 3 3-5"/>
+      </svg>
+    ),
+  },
+  {
+    path: '/dashboard',
+    label: '儀表板',
+    kbd: '2',
+    icon: (
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.4">
+        <rect x="2" y="2" width="5" height="5"/><rect x="9" y="2" width="5" height="5"/>
+        <rect x="2" y="9" width="5" height="5"/><rect x="9" y="9" width="5" height="5"/>
+      </svg>
+    ),
+  },
+  {
+    path: '/profile',
+    label: '個人',
+    kbd: '3',
+    icon: (
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.4">
+        <circle cx="8" cy="5.5" r="2.5"/><path d="M3 14c.8-2.5 2.8-4 5-4s4.2 1.5 5 4"/>
+      </svg>
+    ),
+  },
+  {
+    path: '/explore',
+    label: '探索',
+    kbd: '4',
+    icon: (
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.4">
+        <circle cx="8" cy="8" r="5.5"/>
+        <path d="M11 5L9 9l-4 2 2-4z" fill="currentColor" fillOpacity=".15"/>
+      </svg>
+    ),
+  },
+]
 
 const LogoutIcon = (): React.JSX.Element => (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
-    <polyline points="16 17 21 12 16 7"/>
-    <line x1="21" y1="12" x2="9" y2="12"/>
+  <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.4">
+    <path d="M9 3H3v10h6"/><path d="M7 8h7m-2-2l2 2-2 2"/>
   </svg>
 )
 
 const LoginIcon = (): React.JSX.Element => (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/>
-    <polyline points="8 17 3 12 8 7"/>
-    <line x1="3" y1="12" x2="15" y2="12"/>
+  <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.4">
+    <path d="M7 13H13V3H7"/><path d="M9 8H2m2-2L2 8l2 2"/>
   </svg>
 )
-
-interface NavItem {
-  path: string
-  icon: React.ReactNode
-  label: string
-}
-
-const navItems: NavItem[] = [
-  { path: '/', icon: <HomeIcon />, label: '習慣' },
-  { path: '/dashboard', icon: <BarChartIcon />, label: '儀表板' },
-  { path: '/profile', icon: <UserIcon />, label: '個人' },
-  { path: '/explore', icon: <CompassIcon />, label: '探索' },
-]
 
 const Sidebar = (): React.JSX.Element => {
   const dispatch = useAppDispatch()
@@ -76,94 +75,76 @@ const Sidebar = (): React.JSX.Element => {
   }
 
   const displayName = profile?.displayName ?? authUser?.name ?? ''
-  const displayEmail = authUser?.email ?? profile?.username ?? ''
   const avatarUrl = profile?.avatar ?? authUser?.picture ?? ''
   const isGuest = authUser?.provider === 'guest'
+  const level = profile?.level ?? 1
+  const xp = profile?.xp ?? 0
 
   return (
-    <aside className="fixed left-0 top-0 h-screen hidden md:flex flex-col border-r border-zinc-800 bg-zinc-950 z-10 py-6 w-16 lg:w-64 px-2 lg:px-4">
-      {/* Logo */}
-      <div className="flex items-center justify-center lg:justify-start gap-3 mb-8 lg:px-2">
-        <OctagonLogo />
+    <aside className="fixed left-0 top-0 h-screen hidden md:flex flex-col border-r border-line bg-paper z-10 py-7 w-16 lg:w-64 px-2 lg:px-5">
+      {/* Brand */}
+      <div className="flex items-center justify-center lg:justify-start gap-3 mb-6 pb-4 border-b border-line-2 lg:px-2">
+        <div className="relative w-9 h-9 rounded-full bg-ink-1 text-paper flex items-center justify-center font-serif text-xl italic shrink-0">
+          D
+          <span className="absolute inset-[-3px] rounded-full border border-ink-1 opacity-20 pointer-events-none"></span>
+        </div>
         <div className="hidden lg:block">
-          <div className="text-white font-bold text-sm leading-tight">八角習慣</div>
-          <div className="text-zinc-500 text-xs">Octalysis Tracker</div>
+          <div className="font-serif text-xl text-ink-1 leading-tight">DODOHabit</div>
+          <div className="font-mono text-sm text-ink-4 tracking-widest uppercase mt-0.5">Octalysis · v2</div>
         </div>
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 space-y-1">
+      <nav className="flex flex-col gap-0.5">
+        <div className="hidden lg:block font-mono text-sm text-ink-4 tracking-[0.14em] uppercase px-2.5 pt-1 pb-1.5">Practice</div>
         {navItems.map(item => (
           <NavLink
             key={item.path}
             to={item.path}
             end={item.path === '/'}
             className={({ isActive }) =>
-              `flex items-center justify-center lg:justify-start gap-4 px-3 py-3 rounded-xl transition-all duration-200 ${
+              `flex items-center justify-center lg:justify-start gap-3 px-2.5 py-2.5 rounded-[10px] transition-colors duration-150 ${
                 isActive
-                  ? 'bg-zinc-800 text-white font-semibold'
-                  : 'text-zinc-400 hover:bg-zinc-900 hover:text-white'
+                  ? 'bg-ink-1 text-paper'
+                  : 'text-ink-2 hover:bg-[#f1ebdf]'
               }`
             }
           >
-            <span className="w-5 h-5 flex items-center justify-center shrink-0">{item.icon}</span>
-            <span className="hidden lg:block text-base">{item.label}</span>
+            <span className="w-4 h-4 flex items-center justify-center shrink-0">{item.icon}</span>
+            <span className="hidden lg:block text-sm">{item.label}</span>
+            {item.kbd && (
+              <span className="hidden lg:block ml-auto font-mono text-sm border border-current opacity-40 px-1.5 py-0.5 rounded-[5px]">
+                {item.kbd}
+              </span>
+            )}
           </NavLink>
         ))}
       </nav>
 
-      {/* User Profile + Logout at bottom */}
-      <div className="mt-auto pt-4 border-t border-zinc-800 space-y-1">
-        {/* User info */}
-        <div className="flex items-center justify-center lg:justify-start gap-3 px-1 lg:px-3 py-3 rounded-xl">
-          {/* Avatar */}
-          <div className="w-9 h-9 rounded-full bg-zinc-800 border border-zinc-700 shrink-0 overflow-hidden flex items-center justify-center">
+      {/* User section */}
+      <div className="mt-auto pt-3.5 border-t border-line-2">
+        <div className="flex items-center justify-center lg:justify-start gap-2.5 px-1 lg:px-2.5 py-2.5 rounded-[10px]">
+          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-accent-soft to-accent shrink-0 flex items-center justify-center text-paper font-serif text-base overflow-hidden">
             {avatarUrl && (avatarUrl.includes('http') || avatarUrl.startsWith('data:')) ? (
-              <img
-                src={avatarUrl}
-                alt={displayName}
-                className="w-full h-full object-cover"
-                referrerPolicy="no-referrer"
-              />
+              <img src={avatarUrl} alt={displayName} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
             ) : (
-              <span className="text-lg">
-                {(avatarUrl && avatarUrl.length <= 10) ? avatarUrl : (isGuest ? '👤' : displayName?.charAt(0) || '?')}
+              <span className="font-serif italic text-base">
+                {(avatarUrl && avatarUrl.length <= 10) ? avatarUrl : (isGuest ? '?' : displayName?.charAt(0) || '?')}
               </span>
             )}
           </div>
           <div className="hidden lg:flex flex-1 min-w-0 flex-col">
-            <div className="text-white text-sm font-semibold truncate">{displayName}</div>
-            <div className="text-zinc-500 text-xs truncate">{displayEmail}</div>
+            <div className="text-ink-1 text-[13.5px] font-medium truncate">{displayName || '使用者'}</div>
+            <div className="font-mono text-[12px] text-ink-3 truncate mt-0.5">Lv.{level} · {xp} XP</div>
           </div>
-          <div className="hidden lg:flex flex-col items-end shrink-0">
-            <span className="text-xs text-violet-400 font-bold">Lv.{profile?.level ?? 1}</span>
-          </div>
+          <button
+            onClick={handleLogout}
+            className="hidden lg:flex w-7 h-7 rounded-[8px] border border-line items-center justify-center text-ink-3 hover:bg-[#f1ebdf] transition-colors cursor-pointer shrink-0"
+            title={isGuest ? '登入' : '登出'}
+          >
+            {isGuest ? <LoginIcon /> : <LogoutIcon />}
+          </button>
         </div>
-
-        {/* Login / Logout button */}
-        {isGuest ? (
-          <button
-            onClick={handleLogout}
-            className="w-full flex items-center justify-center lg:justify-start gap-3 px-1 lg:px-3 py-2.5 rounded-xl text-zinc-500 hover:text-violet-400 hover:bg-violet-500/10 transition-all duration-200 group cursor-pointer"
-            title="登入"
-          >
-            <span className="w-5 h-5 flex items-center justify-center shrink-0 group-hover:text-violet-400">
-              <LoginIcon />
-            </span>
-            <span className="hidden lg:block text-sm">登入</span>
-          </button>
-        ) : (
-          <button
-            onClick={handleLogout}
-            className="w-full flex items-center justify-center lg:justify-start gap-3 px-1 lg:px-3 py-2.5 rounded-xl text-zinc-500 hover:text-red-400 hover:bg-red-500/10 transition-all duration-200 group cursor-pointer"
-            title="登出"
-          >
-            <span className="w-5 h-5 flex items-center justify-center shrink-0 group-hover:text-red-400">
-              <LogoutIcon />
-            </span>
-            <span className="hidden lg:block text-sm">登出</span>
-          </button>
-        )}
       </div>
     </aside>
   )

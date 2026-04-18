@@ -4,7 +4,16 @@ import { drives } from '@/constants/drives'
 import { ACHIEVEMENTS } from '@/types'
 import XpBar from './XpBar'
 import StreakBadge from './StreakBadge'
+import { FireIcon, MedalIcon, SproutIcon, StarIcon, DiamondIcon, TargetIcon } from './Icons'
 import type { DriveType } from '@/types'
+
+const achievementIconMap: Record<string, React.ReactNode> = {
+  first_habit: <SproutIcon size={18} />,
+  week_streak: <FireIcon size={18} />,
+  level_5: <StarIcon size={18} />,
+  all_drives: <TargetIcon size={18} />,
+  hundred_xp: <DiamondIcon size={18} />,
+}
 
 interface UserProfileModalProps {
   userId: string
@@ -54,62 +63,60 @@ const UserProfileModal = ({ userId, onClose }: UserProfileModalProps): React.JSX
 
       {/* Sheet */}
       <div
-        className="relative w-full max-w-lg bg-zinc-950 border border-zinc-800 rounded-t-3xl max-h-[90vh] overflow-y-auto scrollbar-none"
+        className="relative w-full max-w-lg bg-card border border-line rounded-t-3xl max-h-[90vh] overflow-y-auto scrollbar-none"
         onClick={e => e.stopPropagation()}
       >
         {/* Drag handle */}
         <div className="flex justify-center pt-3 pb-1">
-          <div className="w-10 h-1 bg-zinc-700 rounded-full" />
+          <div className="w-10 h-1 bg-line rounded-full" />
         </div>
 
         {isLoading ? (
-          <div className="flex items-center justify-center py-16 text-zinc-500 text-sm">載入中...</div>
+          <div className="flex items-center justify-center py-16 text-ink-4 text-sm font-mono">載入中...</div>
         ) : (
           <>
             {/* Cover */}
-            <div className="relative h-28 bg-gradient-to-br from-violet-900/50 via-zinc-900 to-cyan-900/50 overflow-hidden mx-0">
-              <div className="absolute inset-0 opacity-20">
-                {Array.from({ length: 5 }, (_, i) => (
-                  <svg key={i} className="absolute" style={{ left: `${10 + i * 20}%`, top: `${5 + (i % 2) * 30}%`, opacity: 0.3 }} width="48" height="48" viewBox="0 0 60 60">
-                    <polygon points="18,3 42,3 57,18 57,42 42,57 18,57 3,42 3,18" fill="none" stroke="white" strokeWidth="1" />
-                  </svg>
-                ))}
-              </div>
-              <div className="absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-zinc-950 to-transparent" />
+            <div className="relative h-28 overflow-hidden" style={{
+              background: `radial-gradient(circle at 20% 30%, #e8d6c6, transparent 50%), radial-gradient(circle at 80% 70%, #d9dcc6, transparent 50%), #fbf8f2`
+            }}>
+              <svg viewBox="0 0 600 112" width="100%" height="100%" className="absolute inset-0 opacity-25">
+                <g fill="none" stroke="#1a1915" strokeWidth="0.5" opacity=".35">
+                  <circle cx="80" cy="40" r="30"/><circle cx="520" cy="80" r="24"/>
+                  <path d="M 0 100 Q 150 20 350 70 T 620 30"/>
+                </g>
+              </svg>
               {/* Close button */}
               <button
                 onClick={onClose}
-                className="absolute top-3 right-3 w-8 h-8 bg-black/40 rounded-full flex items-center justify-center text-zinc-400 hover:text-white hover:bg-black/60 transition-colors cursor-pointer"
+                className="absolute top-3 right-3 w-8 h-8 bg-paper/80 rounded-full flex items-center justify-center text-ink-3 hover:text-ink-1 hover:bg-paper transition-colors cursor-pointer border border-line"
               >
                 ×
               </button>
             </div>
 
-            <div className="relative z-10 px-4 pb-6">
+            <div className="relative z-10 px-5 pb-6">
               {/* Avatar + name */}
               <div className="flex items-end gap-3 -mt-8 mb-3">
-                <div className="w-16 h-16 rounded-full bg-zinc-800 border-4 border-zinc-950 flex items-center justify-center text-3xl overflow-hidden shrink-0">
+                <div className="w-16 h-16 rounded-full bg-ink-1 border-4 border-card flex items-center justify-center text-3xl overflow-hidden shrink-0">
                   <AvatarLarge avatar={profile?.avatar} name={profile?.displayName} />
                 </div>
                 <div className="pb-1 flex-1 min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
-                    <h2 className="text-white font-bold text-lg truncate">{profile?.displayName}</h2>
-                    <span className="text-violet-400 text-xs font-bold bg-violet-500/10 border border-violet-500/30 px-2 py-0.5 rounded-full shrink-0">Lv.{profile?.level}</span>
+                    <h2 className="font-serif text-[22px] text-ink-1 truncate">{profile?.displayName}</h2>
+                    <span className="text-accent text-sm font-bold font-mono bg-accent-soft border border-accent/20 px-2 py-0.5 rounded-full shrink-0">Lv.{profile?.level}</span>
                   </div>
-                  <p className="text-zinc-500 text-sm">@{profile?.username}</p>
+                  <p className="text-ink-4 text-sm font-mono">@{profile?.username}</p>
                 </div>
               </div>
 
               {/* Streak + XP + top drive */}
-              <div className="flex items-center gap-3 mb-3 flex-wrap">
+              <div className="flex items-center gap-2 mb-3 flex-wrap">
                 <StreakBadge streak={profile?.totalStreak ?? 0} />
-                <span className="text-zinc-600 text-sm">•</span>
-                <span className="text-amber-400 text-sm font-semibold">{(profile?.xp ?? 0).toLocaleString()} XP</span>
+                <span className="text-warm-amber text-sm font-semibold font-mono">{(profile?.xp ?? 0).toLocaleString()} XP</span>
                 {topDriveData && (
-                  <>
-                    <span className="text-zinc-600 text-sm">•</span>
-                    <span className={`text-sm ${topDriveData.color}`}>主要：{topDriveData.chineseName}</span>
-                  </>
+                  <span className={`text-sm px-2 py-0.5 rounded-full border font-mono ${topDriveData.color} ${topDriveData.bgColor} ${topDriveData.borderColor}`}>
+                    {topDriveData.chineseName}
+                  </span>
                 )}
               </div>
 
@@ -119,36 +126,36 @@ const UserProfileModal = ({ userId, onClose }: UserProfileModalProps): React.JSX
               </div>
 
               {/* Stats */}
-              <div className="grid grid-cols-3 gap-2 mb-6">
+              <div className="grid grid-cols-3 gap-2.5 mb-6">
                 {[
                   { label: '習慣數', value: habits.length },
                   { label: '最長連勝', value: `${longestStreak}天` },
                   { label: '成就', value: `${earnedCount}/${ACHIEVEMENTS.length}` },
                 ].map(stat => (
-                  <div key={stat.label} className="bg-zinc-900 border border-zinc-800 rounded-xl p-3 text-center">
-                    <div className="text-white font-bold text-base">{stat.value}</div>
-                    <div className="text-zinc-500 text-xs mt-0.5">{stat.label}</div>
+                  <div key={stat.label} className="bg-paper border border-line rounded-[12px] p-3 text-center">
+                    <div className="font-serif text-[22px] text-ink-1">{stat.value}</div>
+                    <div className="text-ink-4 text-sm mt-0.5 font-mono">{stat.label}</div>
                   </div>
                 ))}
               </div>
 
               {/* Achievements */}
               <div className="mb-6">
-                <h3 className="text-white font-bold text-sm mb-3">成就</h3>
+                <div className="font-mono text-[12px] text-ink-4 tracking-[0.1em] uppercase mb-3">成就</div>
                 <div className="space-y-2">
                   {allAchievements.map(ach => (
-                    <div key={ach.id} className={`flex items-center gap-3 p-3 rounded-xl border transition-all ${ach.earned ? 'bg-zinc-900 border-zinc-700' : 'bg-zinc-900/50 border-zinc-800 opacity-40'}`}>
-                      <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-xl border shrink-0 ${ach.earned ? 'bg-amber-500/10 border-amber-500/30' : 'bg-zinc-800 border-zinc-700 grayscale'}`}>
-                        {ach.icon}
+                    <div key={ach.id} className={`flex items-center gap-3 p-3 rounded-[12px] border transition-all ${ach.earned ? 'bg-card border-line' : 'bg-paper border-line opacity-40'}`}>
+                      <div className={`w-10 h-10 rounded-full flex items-center justify-center border shrink-0 ${ach.earned ? 'bg-warm-amber-soft border-warm-amber/20 text-warm-amber' : 'bg-line-2 border-line text-ink-3'}`}>
+                        {achievementIconMap[ach.id] ?? <MedalIcon size={18} />}
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2">
-                          <span className="text-white font-semibold text-sm">{ach.title}</span>
+                          <span className="font-serif text-[15px] text-ink-1">{ach.title}</span>
                           {ach.earned && (
-                            <span className="text-emerald-400 text-xs bg-emerald-500/10 px-1.5 py-0.5 rounded-full border border-emerald-500/20 shrink-0">已解鎖</span>
+                            <span className="text-leaf text-sm bg-leaf-soft px-1.5 py-0.5 rounded-full border border-leaf/20 shrink-0 font-mono">已解鎖</span>
                           )}
                         </div>
-                        <p className="text-zinc-500 text-xs mt-0.5 truncate">{ach.description}</p>
+                        <p className="text-ink-3 text-sm mt-0.5 truncate">{ach.description}</p>
                       </div>
                     </div>
                   ))}
@@ -157,30 +164,30 @@ const UserProfileModal = ({ userId, onClose }: UserProfileModalProps): React.JSX
 
               {/* Habit records */}
               <div>
-                <h3 className="text-white font-bold text-sm mb-3">習慣記錄</h3>
+                <div className="font-mono text-[12px] text-ink-4 tracking-[0.1em] uppercase mb-3">習慣記錄</div>
                 {habits.length === 0 ? (
-                  <p className="text-zinc-600 text-sm text-center py-4">尚無習慣記錄</p>
+                  <p className="text-ink-4 text-sm text-center py-4 font-mono">尚無習慣記錄</p>
                 ) : (
                   <div className="space-y-2">
                     {habits.map(habit => {
                       const drive = drives.find(d => d.id === habit.driveType)
                       return (
-                        <div key={habit.id} className="flex items-center gap-3 p-3 bg-zinc-900 border border-zinc-800 rounded-xl">
-                          <div className={`w-2 h-10 rounded-full shrink-0 ${drive?.barColor ?? 'bg-zinc-600'}`} />
+                        <div key={habit.id} className="flex items-center gap-3 p-3 bg-paper border border-line rounded-[12px]">
+                          <div className="w-1 h-10 rounded-full shrink-0 bg-accent" />
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-2">
-                              <span className="text-white text-sm font-semibold truncate">{habit.title}</span>
-                              {habit.completed && <span className="text-emerald-400 text-xs shrink-0">✓</span>}
+                              <span className="text-ink-1 text-sm font-medium truncate">{habit.title}</span>
+                              {habit.completed && <span className="text-leaf text-sm shrink-0 font-mono">✓</span>}
                             </div>
                             <div className="flex items-center gap-2 mt-0.5">
-                              {drive && <span className={`text-xs ${drive.color}`}>{drive.chineseName}</span>}
-                              <span className="text-zinc-700 text-xs">•</span>
-                              <span className="text-zinc-500 text-xs">{habit.frequency === 'daily' ? '每日' : '每週'}</span>
+                              {drive && <span className={`text-sm ${drive.color} font-mono`}>{drive.chineseName}</span>}
+                              <span className="text-ink-4 text-sm">·</span>
+                              <span className="text-ink-4 text-sm font-mono">{habit.frequency === 'daily' ? '每日' : '每週'}</span>
                             </div>
                           </div>
                           <div className="text-right shrink-0">
-                            <div className="text-orange-400 text-xs font-semibold">🔥 {habit.streak}</div>
-                            <div className="text-amber-400 text-xs">{habit.xp} XP</div>
+                            <div className="text-accent text-sm font-mono flex items-center gap-1"><FireIcon size={12} /> {habit.streak}</div>
+                            <div className="text-warm-amber text-sm font-mono">{habit.xp} XP</div>
                           </div>
                         </div>
                       )

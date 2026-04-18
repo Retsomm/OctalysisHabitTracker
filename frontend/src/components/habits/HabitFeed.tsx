@@ -50,41 +50,36 @@ const HabitFeed = (): React.JSX.Element => {
 
   return (
     <div>
-      {/* Header */}
-      <div className="sticky top-0 bg-zinc-950/90 backdrop-blur-md border-b border-zinc-800 z-10">
-        {/* Progress indicator */}
-        <div className="flex items-center justify-between px-4 pt-4 pb-2">
-          <h2 className="text-white font-bold text-lg">習慣動態</h2>
-          <div className="flex items-center gap-2 text-sm">
-            <span className="text-emerald-400 font-semibold">{completedCount}</span>
-            <span className="text-zinc-600">/</span>
-            <span className="text-zinc-400">{totalCount} 今日完成</span>
-            <span className="text-zinc-600 text-xs">({overallRate}%)</span>
+      {/* Sticky filter header */}
+      <div className="sticky top-0 bg-ivory/90 backdrop-blur-md border-b border-line-2 z-10">
+        <div className="flex items-center justify-between px-6 pt-4 pb-2">
+          <div>
+            <div className="font-mono text-sm text-ink-4 tracking-[0.14em] uppercase">習慣動態</div>
+            <div className="font-serif text-[24px] text-ink-1 mt-0.5">
+              {totalCount} 項 · 今日 <em className="italic text-accent">{overallRate}% 完成</em>
+            </div>
           </div>
-        </div>
-
-        {/* Today's progress bar */}
-        <div className="px-4 pb-3">
-          <div className="h-1.5 bg-zinc-800 rounded-full overflow-hidden">
-            <div
-              className="h-full bg-linear-to-r from-emerald-500 to-emerald-400 rounded-full transition-all duration-500"
-              style={{ width: `${overallRate}%` }}
-            />
+          <div className="text-right">
+            <div className="font-mono text-[12px] text-ink-4">{completedCount} / {totalCount}</div>
+            <div className="h-[3px] bg-line-2 rounded-full overflow-hidden w-20 mt-1.5">
+              <div
+                className="h-full bg-leaf rounded-full transition-all duration-500"
+                style={{ width: `${overallRate}%` }}
+              />
+            </div>
           </div>
         </div>
 
         {/* Filter tabs */}
-        <div className="flex items-center gap-1 px-3 pb-3 overflow-x-auto">
+        <div className="flex items-center gap-1 px-5 pb-3 overflow-x-auto scrollbar-none">
           {allTabs.map(tab => (
             <button
               key={String(tab.value)}
               onClick={() => dispatch(setFilter(tab.value))}
-              className={`shrink-0 px-3 py-1.5 rounded-full text-xs font-medium transition-all duration-200 cursor-pointer ${
+              className={`shrink-0 px-3 py-1.5 rounded-[8px] text-sm font-medium transition-all duration-200 cursor-pointer font-mono ${
                 filter === tab.value
-                  ? tab.color
-                    ? `${tab.color} bg-zinc-800 border border-zinc-600`
-                    : 'text-white bg-zinc-800 border border-zinc-600'
-                  : 'text-zinc-500 hover:text-zinc-300 hover:bg-zinc-900 border border-transparent'
+                  ? 'bg-ink-1 text-paper'
+                  : 'text-ink-3 hover:text-ink-1 hover:bg-line-2'
               }`}
             >
               {tab.label}
@@ -98,14 +93,21 @@ const HabitFeed = (): React.JSX.Element => {
         {showSkeleton ? (
           <HabitFeedSkeleton />
         ) : filteredHabits.length === 0 && !isFetching ? (
-          <div className="flex flex-col items-center justify-center py-20 text-center px-8">
-            <div className="text-6xl mb-4">🌱</div>
-            <h3 className="text-white font-semibold text-lg mb-2">尚無習慣</h3>
-            <p className="text-zinc-500 text-sm">
+          <div className="flex flex-col items-center justify-center py-16 text-center px-8 border border-dashed border-line m-6 rounded-[14px] bg-paper">
+            <div className="font-serif text-[60px] leading-[1] text-accent italic">∅</div>
+            <div className="font-serif text-[26px] text-ink-1 mt-3.5">尚無習慣</div>
+            <p className="text-ink-3 text-sm mt-2 max-w-xs leading-relaxed">
               {filter === 'all'
-                ? '開始建立你的第一個習慣吧！'
+                ? '從一件微小的行動開始。譬如：每天清晨閱讀三分鐘，或晚餐後散步十步。'
                 : '此分類下尚無習慣，試試切換到其他分類。'}
             </p>
+            {filter === 'all' && (
+              <div className="flex gap-2 flex-wrap justify-center mt-4">
+                {['🍵 清晨一杯水', '📖 三分鐘閱讀', '🚶 散步十步', '✍️ 寫下一句話'].map(chip => (
+                  <span key={chip} className="text-sm px-3 py-1.5 rounded-full border border-line bg-card text-ink-3 font-mono">{chip}</span>
+                ))}
+              </div>
+            )}
           </div>
         ) : (
           filteredHabits.map(habit => (

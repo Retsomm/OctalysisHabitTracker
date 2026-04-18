@@ -25,13 +25,11 @@ const Layout = ({ children }: LayoutProps): React.JSX.Element => {
       const vpHeight = window.innerHeight
 
       if (panelHeight <= vpHeight) {
-        // 右側內容比視窗矮：直接貼頂固定
         panel.style.top = '0px'
       } else {
-        // 右側內容比視窗高：動態調整 top，讓底部先貼底、頂部先貼頂
         const currentTop = parseFloat(panel.style.top || '0')
         const newTop = currentTop - dy
-        const minTop = vpHeight - panelHeight // 底部貼齊視窗底部
+        const minTop = vpHeight - panelHeight
         panel.style.top = Math.max(minTop, Math.min(0, newTop)) + 'px'
       }
     }
@@ -41,21 +39,15 @@ const Layout = ({ children }: LayoutProps): React.JSX.Element => {
   }, [])
 
   return (
-    <div className="min-h-screen bg-zinc-950 flex [overflow-x:clip]">
-      {/* Left Sidebar - hidden on mobile, icon-only on md, full on lg */}
+    <div className="min-h-screen bg-ivory flex [overflow-x:clip]">
       <Sidebar />
 
-      {/* Main Content - no offset on mobile, icon-sidebar offset on md, full offset on lg */}
       <div className="flex-1 min-w-0 ml-0 md:ml-16 lg:ml-64 flex justify-center pb-16 md:pb-0">
         <div className="flex w-full min-w-0 max-w-5xl">
-          {/* Main Feed */}
-          <main className="flex-1 min-w-0 min-h-screen border-x border-zinc-800 max-w-2xl w-full overflow-x-hidden">
+          <main className="flex-1 min-w-0 min-h-screen border-x border-line max-w-2xl w-full overflow-x-hidden bg-ivory">
             {children}
           </main>
 
-          {/* Right Panel - only on xl+
-              align-self: flex-start 讓元素只佔自身高度（sticky 在 flex 容器中的必要條件）
-              position: sticky + 動態 top 實現 X 風格滾動固定行為 */}
           <div
             ref={rightPanelRef}
             className="hidden xl:block w-80 ml-6 sticky"
@@ -66,7 +58,6 @@ const Layout = ({ children }: LayoutProps): React.JSX.Element => {
         </div>
       </div>
 
-      {/* Bottom Nav - mobile only */}
       <BottomNav />
     </div>
   )

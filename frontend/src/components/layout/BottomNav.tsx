@@ -1,22 +1,49 @@
 import React from 'react'
 import { NavLink } from 'react-router-dom'
-import { HomeIcon, BarChartIcon, CompassIcon, UserIcon } from '@/components/common/Icons'
 
-interface NavItem {
-  path: string
-  icon: React.ReactNode
-  label: string
-}
-
-const navItems: NavItem[] = [
-  { path: '/', icon: <HomeIcon />, label: '習慣' },
-  { path: '/dashboard', icon: <BarChartIcon />, label: '儀表板' },
-  { path: '/explore', icon: <CompassIcon />, label: '探索' },
-  { path: '/profile', icon: <UserIcon />, label: '個人' },
+const navItems = [
+  {
+    path: '/',
+    label: '習慣',
+    icon: (
+      <svg width="18" height="18" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.4">
+        <path d="M2.5 8.5l2 2 3-3 3 3 3-5"/>
+      </svg>
+    ),
+  },
+  {
+    path: '/dashboard',
+    label: '儀表板',
+    icon: (
+      <svg width="18" height="18" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.4">
+        <rect x="2" y="2" width="5" height="5"/><rect x="9" y="2" width="5" height="5"/>
+        <rect x="2" y="9" width="5" height="5"/><rect x="9" y="9" width="5" height="5"/>
+      </svg>
+    ),
+  },
+  {
+    path: '/explore',
+    label: '探索',
+    icon: (
+      <svg width="18" height="18" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.4">
+        <circle cx="8" cy="8" r="5.5"/>
+        <path d="M11 5L9 9l-4 2 2-4z" fill="currentColor" fillOpacity=".15"/>
+      </svg>
+    ),
+  },
+  {
+    path: '/profile',
+    label: '個人',
+    icon: (
+      <svg width="18" height="18" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.4">
+        <circle cx="8" cy="5.5" r="2.5"/><path d="M3 14c.8-2.5 2.8-4 5-4s4.2 1.5 5 4"/>
+      </svg>
+    ),
+  },
 ]
 
 const BottomNav = (): React.JSX.Element => (
-  <nav className="fixed bottom-0 left-0 right-0 z-20 flex md:hidden bg-zinc-950 border-t border-zinc-800">
+  <nav className="fixed bottom-0 left-0 right-0 z-20 flex md:hidden bg-paper border-t border-line">
     {navItems.map(item => (
       <NavLink
         key={item.path}
@@ -24,12 +51,12 @@ const BottomNav = (): React.JSX.Element => (
         end={item.path === '/'}
         className={({ isActive }) =>
           `flex flex-1 flex-col items-center justify-center py-3 gap-1 transition-colors ${
-            isActive ? 'text-white' : 'text-zinc-500'
+            isActive ? 'text-ink-1' : 'text-ink-4'
           }`
         }
       >
         <span className="w-5 h-5 flex items-center justify-center">{item.icon}</span>
-        <span className="text-[10px] leading-none">{item.label}</span>
+        <span className="font-mono text-[10px] leading-none">{item.label}</span>
       </NavLink>
     ))}
   </nav>

@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { drives } from '@/constants/drives'
-import { useGetLeaderboardQuery, useGetActivityQuery, useSearchUsersQuery, useGetTrendingDrivesQuery } from '@/store/api'
-import { SearchIcon } from '@/components/common/Icons'
+import { useGetLeaderboardQuery, useGetActivityQuery, useGetTrendingDrivesQuery } from '@/store/api'
 import UserProfileModal from '@/components/common/UserProfileModal'
 
 const formatTimestamp = (ts: string): string => {
@@ -19,10 +18,10 @@ const AvatarDisplay = ({ avatar, name }: { avatar?: string; name?: string }): Re
   const isShortStr = avatar && avatar.length <= 10 && !isImage
 
   if (isImage) {
-    return <img src={avatar} alt={name} className="w-10 h-10 rounded-full object-cover border border-zinc-700 shrink-0" referrerPolicy="no-referrer" />
+    return <img src={avatar} alt={name} className="w-10 h-10 rounded-full object-cover border border-line shrink-0" referrerPolicy="no-referrer" />
   }
   return (
-    <div className="w-10 h-10 rounded-full bg-zinc-800 border border-zinc-700 flex items-center justify-center text-xl shrink-0">
+    <div className="w-10 h-10 rounded-full bg-line border border-line flex items-center justify-center text-xl shrink-0">
       {isShortStr ? avatar : (name?.charAt(0) || '?')}
     </div>
   )
@@ -33,10 +32,10 @@ const LeaderboardAvatarDisplay = ({ avatar, name }: { avatar?: string; name?: st
   const isShortStr = avatar && avatar.length <= 10 && !isImage
 
   if (isImage) {
-    return <img src={avatar} alt={name} className="w-12 h-12 rounded-full object-cover border border-zinc-700" referrerPolicy="no-referrer" />
+    return <img src={avatar} alt={name} className="w-11 h-11 rounded-full object-cover border border-line" referrerPolicy="no-referrer" />
   }
   return (
-    <div className="w-12 h-12 rounded-full bg-zinc-800 border border-zinc-700 flex items-center justify-center text-2xl">
+    <div className="w-11 h-11 rounded-full bg-line border border-line flex items-center justify-center text-xl font-serif italic">
       {isShortStr ? avatar : (name?.charAt(0) || '?')}
     </div>
   )
@@ -49,146 +48,96 @@ const Explore = (): React.JSX.Element => {
   const topLeaderboard = leaderboard.slice(0, 10)
   const latestActivityFeed = activityFeed.slice(0, 5)
 
-  const [searchQuery, setSearchQuery] = useState('')
-  const [debouncedQuery, setDebouncedQuery] = useState('')
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null)
 
-  useEffect(() => {
-    const timer = setTimeout(() => setDebouncedQuery(searchQuery.trim()), 300)
-    return () => clearTimeout(timer)
-  }, [searchQuery])
-
-  const { data: searchResult, isFetching: isSearching } = useSearchUsersQuery(debouncedQuery, {
-    skip: !debouncedQuery,
-  })
-
-  // 根據熱門資料排序驅動力，若無資料則維持原序
   const sortedDrives = [...drives].sort((a, b) => {
     const aCount = trendingDrives.find(t => t.driveType === a.id)?.count ?? 0
     const bCount = trendingDrives.find(t => t.driveType === b.id)?.count ?? 0
     return bCount - aCount
   })
 
-  const isSearchMode = debouncedQuery.length > 0
-  const searchUsers = searchResult?.users ?? []
-
   return (
     <div>
       {/* Header */}
-      <div className="sticky top-0 bg-zinc-950/90 backdrop-blur-md border-b border-zinc-800 z-20 px-4 py-3">
-        <h1 className="text-white font-bold text-xl">探索</h1>
+      <div className="sticky top-0 bg-ivory/90 backdrop-blur-md border-b border-line-2 z-20 px-6 py-4">
+        <div className="font-mono text-[13px] text-ink-4 tracking-[0.14em] uppercase flex items-center gap-2">
+          <span className="text-accent">●</span> 探索 · 社群與動機
+        </div>
+        <h1 className="font-serif text-[32px] leading-[1.02] text-ink-1 mt-5">找到你的<em className="italic text-accent">同路人</em>。</h1>
+        <p className="text-ink-3 text-base mt-5 leading-relaxed">瀏覽八大驅動力分類下的熱門習慣、加入社群挑戰、關注你仰慕的實踐者。</p>
       </div>
 
-      <div className="px-4 py-4 space-y-6">
-        {/* Search */}
-        <div className="relative">
-          <input
-            type="text"
-            placeholder="搜尋使用者..."
-            value={searchQuery}
-            onChange={e => setSearchQuery(e.target.value)}
-            className="w-full bg-zinc-900 border border-zinc-800 text-white placeholder-zinc-500 rounded-2xl px-4 py-3 pl-10 outline-none focus:border-zinc-600 transition-colors text-sm"
-          />
-          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500">
-            <SearchIcon size={16} />
-          </span>
-          {searchQuery && (
-            <button
-              onClick={() => setSearchQuery('')}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-zinc-300 text-lg leading-none"
-            >
-              ×
-            </button>
-          )}
+      <div className="px-6 py-5 space-y-6">
+        {/* Divider */}
+        <div className="flex items-center gap-3.5 text-line">
+          <div className="flex-1 h-px bg-line" />
+          <span className="font-serif text-[18px] italic text-ink-4">I</span>
+          <div className="flex-1 h-px bg-line" />
         </div>
 
-        {/* Search Results */}
-        {isSearchMode && (
-          <div>
-            <h3 className="text-white font-bold text-base mb-3">搜尋結果</h3>
-            {isSearching ? (
-              <div className="text-zinc-500 text-sm text-center py-6">搜尋中...</div>
-            ) : searchUsers.length === 0 ? (
-              <div className="text-zinc-500 text-sm text-center py-6">沒有找到「{debouncedQuery}」相關的使用者</div>
-            ) : (
-              <div className="space-y-2">
-                {searchUsers.map(user => (
-                  <div
-                    key={user.id}
-                    onClick={() => setSelectedUserId(user.id)}
-                    className="flex items-center gap-3 p-3 bg-zinc-900 border border-zinc-800 rounded-xl hover:border-zinc-700 transition-colors cursor-pointer"
-                  >
-                    <LeaderboardAvatarDisplay avatar={user.avatar} name={user.displayName} />
-                    <div className="flex-1 min-w-0">
-                      <div className="text-white text-sm font-semibold truncate">{user.displayName}</div>
-                      <div className="text-zinc-500 text-xs">@{user.username}</div>
-                    </div>
-                    <div className="text-right shrink-0">
-                      <div className="text-violet-400 text-xs font-bold">Lv.{user.level}</div>
-                      <div className="text-amber-400 text-xs">{user.xp.toLocaleString()} XP</div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* Trending Drives - 僅在非搜尋模式顯示 */}
-        {!isSearchMode && (
-          <div>
-            <h3 className="text-white font-bold text-base mb-3">熱門驅動力類型</h3>
-            <div className="space-y-2">
-              {sortedDrives.map((drive, index) => {
+        {/* Trending Drives */}
+        <div>
+            <div className="font-mono text-[13px] text-ink-4 tracking-[0.14em] uppercase mb-1">熱門驅動力類別</div>
+            <div className="font-serif text-[26px] text-ink-1 mt-1 mb-4">從<em className="italic text-accent">動機</em>開始探索</div>
+            <div className="space-y-2.5">
+              {sortedDrives.map((drive) => {
                 const trendData = trendingDrives.find(t => t.driveType === drive.id)
                 const count = trendData?.count ?? 0
                 return (
                   <div
                     key={drive.id}
-                    className={`flex items-center gap-4 p-3 rounded-xl border cursor-pointer transition-all hover:border-zinc-600 ${drive.bgColor} ${drive.borderColor}`}
+                    className={`grid grid-cols-[36px_1fr_auto_auto] gap-4 items-center p-3.5 rounded-[14px] border cursor-pointer transition-all hover:shadow-sm ${drive.bgColor} ${drive.borderColor}`}
                   >
-                    <span className="text-zinc-500 text-sm font-mono w-4">{index + 1}</span>
-                    <div className="flex-1">
-                      <div className={`font-semibold text-sm ${drive.color}`}>{drive.chineseName}</div>
-                      <div className="text-zinc-500 text-xs">{drive.name}</div>
+                    <div className={`font-serif text-[26px] italic leading-[1] ${drive.color}`}>{drive.id}</div>
+                    <div>
+                      <div className={`font-serif text-[19px] leading-[1.1] ${drive.color}`}>{drive.chineseName}</div>
+                      <div className="font-mono text-sm text-ink-4 mt-0.5 tracking-[0.04em]">{drive.name}</div>
                     </div>
-                    {count > 0 && (
-                      <span className="text-zinc-400 text-xs shrink-0">{count} 次完成</span>
-                    )}
+                    <span className="font-mono text-[12px] text-ink-3">{count > 0 ? `${count} 位實踐者` : '0 位實踐者'}</span>
+                    <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6" className={`${drive.color} shrink-0`}>
+                      <path d="M5 3l5 5-5 5"/>
+                    </svg>
                   </div>
                 )
               })}
             </div>
-          </div>
-        )}
+        </div>
 
-        {/* Community Activity - 僅在非搜尋模式顯示 */}
-        {!isSearchMode && (
+        {/* Divider */}
+        <div className="flex items-center gap-3.5 text-line">
+          <div className="flex-1 h-px bg-line" />
+          <span className="font-serif text-[18px] italic text-ink-4">II</span>
+          <div className="flex-1 h-px bg-line" />
+        </div>
+
+        {/* Community Activity */}
+        {latestActivityFeed.length > 0 && (
           <div>
-            <h3 className="text-white font-bold text-base mb-3">社群動態</h3>
+            <div className="font-mono text-[13px] text-ink-4 tracking-[0.14em] uppercase mb-1">社群動態</div>
+            <div className="font-serif text-[26px] text-ink-1 mt-1 mb-4">本週<em className="italic text-accent">靜默的練習者</em></div>
             <div className="space-y-3">
               {latestActivityFeed.map(item => {
                 const drive = drives.find(d => d.id === item.driveType)
                 return (
                   <div
                     key={item.id}
-                    className="flex items-start gap-3 p-3 bg-zinc-900 border border-zinc-800 rounded-xl hover:border-zinc-700 transition-colors cursor-pointer"
+                    className="flex items-start gap-3 p-4 bg-card border border-line rounded-[14px] hover:border-ink-4/30 transition-colors cursor-pointer"
                   >
                     <AvatarDisplay avatar={item.avatar} name={item.displayName} />
                     <div className="flex-1">
                       <div className="flex items-center gap-1 flex-wrap">
-                        <span className="text-white text-sm font-semibold">{item.displayName}</span>
-                        <span className="text-zinc-500 text-sm">{item.action}</span>
-                        <span className="text-zinc-300 text-sm font-medium">「{item.habitTitle}」</span>
+                        <span className="font-serif text-[18px] text-ink-1">{item.displayName}</span>
+                        <span className="text-ink-3 text-sm">{item.action}</span>
+                        <span className="text-ink-1 text-sm font-medium">「{item.habitTitle}」</span>
                       </div>
-                      <div className="flex items-center gap-2 mt-1">
+                      <div className="flex items-center gap-2 mt-1.5">
                         {drive && (
-                          <span className={`text-xs px-2 py-0.5 rounded-full ${drive.bgColor} ${drive.color} ${drive.borderColor} border`}>
+                          <span className={`text-sm px-2 py-0.5 rounded-full ${drive.bgColor} ${drive.color} ${drive.borderColor} border font-mono`}>
                             {drive.chineseName}
                           </span>
                         )}
-                        <span className="text-amber-400 text-xs font-semibold">+{item.xpEarned} XP</span>
-                        <span className="text-zinc-600 text-xs ml-auto">{formatTimestamp(item.timestamp)}</span>
+                        <span className="text-warm-amber text-sm font-semibold font-mono">+{item.xpEarned} XP</span>
+                        <span className="text-ink-4 text-sm ml-auto font-mono">{formatTimestamp(item.timestamp)}</span>
                       </div>
                     </div>
                   </div>
@@ -198,33 +147,42 @@ const Explore = (): React.JSX.Element => {
           </div>
         )}
 
-        {/* Top Community Members - 僅在非搜尋模式顯示 */}
-        {!isSearchMode && (
+        {/* Top Community Members */}
+        {topLeaderboard.length > 0 && (
           <div>
-            <h3 className="text-white font-bold text-base mb-3">社群精英</h3>
+            <div className="font-mono text-[13px] text-ink-4 tracking-[0.14em] uppercase mb-1">社群精選</div>
+            <div className="font-serif text-[26px] text-ink-1 mt-1 mb-4">本週<em className="italic text-accent">靜默的練習者</em></div>
             <div className="grid grid-cols-2 gap-3">
-              {topLeaderboard.map((lu, index) => {
-                const medals = ['🥇', '🥈', '🥉']
+              {topLeaderboard.slice(0, 4).map((lu, index) => {
+                const rankColors = [
+                  'bg-warm-amber text-paper',
+                  'bg-ink-3 text-paper',
+                  'bg-accent-soft text-accent',
+                ]
                 return (
                   <div
                     key={lu.id}
                     onClick={() => setSelectedUserId(lu.id)}
-                    className="flex flex-col items-center p-4 bg-zinc-900 border border-zinc-800 rounded-2xl hover:border-zinc-700 transition-colors cursor-pointer text-center"
+                    className="flex items-start gap-3.5 p-4 bg-card border border-line rounded-[14px] hover:border-ink-4/30 transition-colors cursor-pointer"
                   >
-                    <div className="relative mb-2">
+                    <div className="relative shrink-0">
                       <LeaderboardAvatarDisplay avatar={lu.avatar} name={lu.displayName} />
                       {index < 3 && (
-                        <span className="absolute -top-1 -right-1 text-sm">{medals[index]}</span>
+                        <span className={`absolute -top-1 -right-1 w-5 h-5 rounded-full flex items-center justify-center font-mono text-[10px] font-bold border-2 border-card ${rankColors[index]}`}>
+                          {index + 1}
+                        </span>
                       )}
                     </div>
-                    <div className="text-white text-sm font-semibold">{lu.displayName}</div>
-                    <div className="text-zinc-500 text-xs mb-2">{lu.username}</div>
-                    <div className="flex items-center gap-2 text-xs">
-                      <span className="text-violet-400 font-bold">Lv.{lu.level}</span>
-                      <span className="text-zinc-700">•</span>
-                      <span className="text-orange-400">🔥 {lu.totalStreak}</span>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-baseline justify-between gap-1">
+                        <div className="font-serif text-[18px] text-ink-1 truncate">{lu.displayName}</div>
+                      </div>
+                      <div className="text-ink-3 text-sm font-mono mt-0.5 truncate">@{lu.username}</div>
+                      <div className="flex gap-1.5 mt-2.5">
+                        <span className="text-[12px] px-2 py-0.5 rounded-full border border-line bg-paper text-ink-3 font-mono cursor-pointer hover:bg-line-2">關注</span>
+                        <span className="text-[12px] px-2 py-0.5 rounded-full border border-line bg-paper text-ink-3 font-mono cursor-pointer hover:bg-line-2">查看</span>
+                      </div>
                     </div>
-                    <div className="text-amber-400 text-xs font-bold mt-1">{lu.xp.toLocaleString()} XP</div>
                   </div>
                 )
               })}

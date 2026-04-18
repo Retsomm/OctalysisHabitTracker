@@ -78,61 +78,61 @@ const EditHabitModal = ({ habit, onClose }: EditHabitModalProps): React.JSX.Elem
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/60 backdrop-blur-sm p-0 sm:p-4"
+      className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-ink-1/40 backdrop-blur-sm p-0 sm:p-4"
       onClick={onClose}
     >
       <div
-        className="w-full sm:max-w-lg bg-zinc-950 border border-zinc-800 rounded-t-3xl sm:rounded-3xl max-h-[90vh] overflow-y-auto"
+        className="w-full sm:max-w-lg bg-card border border-line rounded-t-3xl sm:rounded-[22px] max-h-[90vh] overflow-y-auto"
         onClick={e => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-5 py-4 border-b border-zinc-800 sticky top-0 bg-zinc-950 z-10">
-          <h2 className="text-white font-bold text-lg">編輯習慣</h2>
+        <div className="flex items-center justify-between px-5 py-4 border-b border-line sticky top-0 bg-card z-10">
+          <h2 className="font-serif text-[22px] text-ink-1">編輯習慣</h2>
           <button
             onClick={onClose}
-            className="text-zinc-500 hover:text-white transition-colors text-xl leading-none cursor-pointer"
+            className="text-ink-4 hover:text-ink-1 transition-colors text-xl leading-none cursor-pointer w-8 h-8 flex items-center justify-center rounded-full hover:bg-line-2"
           >✕</button>
         </div>
 
         <div className="px-5 py-4 space-y-4">
           {/* 標題 */}
           <div>
-            <label className="text-zinc-500 text-xs font-semibold uppercase tracking-wide block mb-1.5">習慣名稱</label>
+            <label className="font-mono text-sm text-ink-4 uppercase tracking-[0.12em] block mb-1.5">習慣名稱</label>
             <input
               type="text"
               value={title}
               onChange={e => setTitle(e.target.value)}
               maxLength={100}
-              className="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-4 py-2.5 text-white text-sm outline-none focus:border-violet-500/50 transition-colors"
+              className="w-full bg-paper border border-line rounded-[10px] px-4 py-2.5 text-ink-1 text-sm outline-none focus:border-accent/40 transition-colors"
             />
           </div>
 
           {/* 描述 */}
           <div>
-            <label className="text-zinc-500 text-xs font-semibold uppercase tracking-wide block mb-1.5">描述</label>
+            <label className="font-mono text-sm text-ink-4 uppercase tracking-[0.12em] block mb-1.5">描述</label>
             <textarea
               value={description}
               onChange={e => setDescription(e.target.value)}
               rows={3}
-              className="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-4 py-2.5 text-zinc-300 text-sm outline-none focus:border-violet-500/50 transition-colors resize-none leading-relaxed"
+              className="w-full bg-paper border border-line rounded-[10px] px-4 py-2.5 text-ink-2 text-sm outline-none focus:border-accent/40 transition-colors resize-none leading-relaxed"
             />
           </div>
 
           {/* 圖片 */}
           <div>
-            <label className="text-zinc-500 text-xs font-semibold uppercase tracking-wide block mb-1.5">圖片</label>
+            <label className="font-mono text-sm text-ink-4 uppercase tracking-[0.12em] block mb-1.5">圖片</label>
             {imagePreview ? (
               <div className="relative">
-                <img src={imagePreview} alt="預覽" className="w-full max-h-40 object-cover rounded-xl border border-zinc-700" />
+                <img src={imagePreview} alt="預覽" className="w-full max-h-40 object-cover rounded-[10px] border border-line" />
                 <button
                   onClick={() => { setImagePreview(null); if (fileInputRef.current) fileInputRef.current.value = '' }}
-                  className="absolute top-2 right-2 bg-zinc-900/80 text-zinc-300 rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-zinc-800 cursor-pointer"
+                  className="absolute top-2 right-2 bg-paper/80 text-ink-3 rounded-full w-6 h-6 flex items-center justify-center text-sm hover:bg-paper cursor-pointer border border-line"
                 >✕</button>
               </div>
             ) : (
               <button
                 onClick={() => fileInputRef.current?.click()}
-                className="w-full py-3 border border-dashed border-zinc-700 rounded-xl text-zinc-500 hover:text-zinc-300 hover:border-zinc-500 transition-colors text-sm cursor-pointer"
+                className="w-full py-3 border border-dashed border-line rounded-[10px] text-ink-4 hover:text-ink-2 hover:border-ink-4/40 transition-colors text-sm cursor-pointer"
               >
                 + 選擇圖片
               </button>
@@ -142,18 +142,18 @@ const EditHabitModal = ({ habit, onClose }: EditHabitModalProps): React.JSX.Elem
 
           {/* 專案 */}
           <div>
-            <label className="text-zinc-500 text-xs font-semibold uppercase tracking-wide block mb-1.5">歸屬專案</label>
-            <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-3 space-y-2">
+            <label className="font-mono text-sm text-ink-4 uppercase tracking-[0.12em] block mb-1.5">歸屬專案</label>
+            <div className="bg-paper border border-line rounded-[10px] p-3 space-y-2">
               {projects.length > 0 && (
                 <div className="flex flex-wrap gap-1.5">
                   {projects.map(p => (
                     <button
                       key={p.id}
                       onClick={() => handleProjectToggle(p.id)}
-                      className={`px-2.5 py-1 rounded-full text-xs border transition-all cursor-pointer ${
+                      className={`px-2.5 py-1 rounded-full text-sm border transition-all cursor-pointer ${
                         selectedProjectIds.includes(p.id)
-                          ? 'bg-violet-500/20 text-violet-300 border-violet-500/40'
-                          : 'text-zinc-500 border-zinc-700 hover:border-zinc-500 hover:text-zinc-300'
+                          ? 'bg-accent/10 text-accent border-accent/30'
+                          : 'text-ink-4 border-line hover:border-ink-4 hover:text-ink-2'
                       }`}
                     >
                       {selectedProjectIds.includes(p.id) && <span className="mr-1">✓</span>}
@@ -169,12 +169,12 @@ const EditHabitModal = ({ habit, onClose }: EditHabitModalProps): React.JSX.Elem
                   value={newProjectName}
                   onChange={e => setNewProjectName(e.target.value)}
                   onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); void handleCreateProject() } }}
-                  className="flex-1 bg-zinc-800/60 text-zinc-300 text-sm placeholder-zinc-600 outline-none border border-zinc-700 rounded-lg px-3 py-1.5 focus:border-violet-500/50"
+                  className="flex-1 bg-card text-ink-2 text-sm placeholder-ink-4 outline-none border border-line rounded-lg px-3 py-1.5 focus:border-accent/40"
                 />
                 <button
                   onClick={() => { void handleCreateProject() }}
                   disabled={!newProjectName.trim() || isCreatingProject}
-                  className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-violet-600/30 text-violet-300 hover:bg-violet-600/50 transition-all cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed border border-violet-500/30"
+                  className="px-3 py-1.5 rounded-lg text-sm font-medium bg-accent/10 text-accent hover:bg-accent/20 transition-all cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed border border-accent/20"
                 >
                   {isCreatingProject ? '...' : '+ 新增'}
                 </button>
@@ -185,16 +185,16 @@ const EditHabitModal = ({ habit, onClose }: EditHabitModalProps): React.JSX.Elem
           {/* 提醒 */}
           <div>
             <div className="flex items-center justify-between mb-2">
-              <label className="text-zinc-500 text-xs font-semibold uppercase tracking-wide">每日提醒</label>
+              <label className="font-mono text-sm text-ink-4 uppercase tracking-[0.12em]">每日提醒</label>
               <button
                 onClick={() => setReminderEnabled(prev => !prev)}
-                className={`relative w-10 h-5 rounded-full transition-colors cursor-pointer ${reminderEnabled ? 'bg-amber-500' : 'bg-zinc-700'}`}
+                className={`relative w-10 h-5 rounded-full transition-colors cursor-pointer ${reminderEnabled ? 'bg-warm-amber' : 'bg-line'}`}
               >
                 <span className={`absolute top-0.5 w-4 h-4 rounded-full bg-white transition-all ${reminderEnabled ? 'left-5.5' : 'left-0.5'}`} />
               </button>
             </div>
             {reminderEnabled && (
-              <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-3 flex items-center justify-center">
+              <div className="bg-paper border border-line rounded-[10px] p-3 flex items-center justify-center">
                 <TimePicker value={reminderTime} onChange={setReminderTime} />
               </div>
             )}
@@ -202,16 +202,16 @@ const EditHabitModal = ({ habit, onClose }: EditHabitModalProps): React.JSX.Elem
 
           {/* Drive */}
           <div>
-            <label className="text-zinc-500 text-xs font-semibold uppercase tracking-wide block mb-1.5">驅動力類型</label>
+            <label className="font-mono text-sm text-ink-4 uppercase tracking-[0.12em] block mb-1.5">驅動力類型</label>
             <div className="flex flex-wrap gap-1.5">
               {drives.map(drive => (
                 <button
                   key={drive.id}
                   onClick={() => setSelectedDrive(drive.id)}
-                  className={`px-2.5 py-1 rounded-full text-xs font-medium border transition-all cursor-pointer ${
+                  className={`px-2.5 py-1 rounded-full text-sm font-medium border transition-all cursor-pointer ${
                     selectedDrive === drive.id
                       ? `${drive.color} ${drive.bgColor} ${drive.borderColor}`
-                      : 'text-zinc-500 border-zinc-700 hover:border-zinc-500 hover:text-zinc-300'
+                      : 'text-ink-4 border-line hover:border-ink-4 hover:text-ink-2'
                   }`}
                 >
                   {drive.id}. {drive.chineseName}
@@ -222,16 +222,16 @@ const EditHabitModal = ({ habit, onClose }: EditHabitModalProps): React.JSX.Elem
 
           {/* 頻率 */}
           <div>
-            <label className="text-zinc-500 text-xs font-semibold uppercase tracking-wide block mb-1.5">頻率</label>
+            <label className="font-mono text-sm text-ink-4 uppercase tracking-[0.12em] block mb-1.5">頻率</label>
             <div className="flex gap-2">
               {(['daily', 'weekly'] as const).map(f => (
                 <button
                   key={f}
                   onClick={() => setFrequency(f)}
-                  className={`px-4 py-2 rounded-xl text-sm border transition-all cursor-pointer ${
+                  className={`px-4 py-2 rounded-[10px] text-sm border transition-all cursor-pointer ${
                     frequency === f
-                      ? 'text-white bg-zinc-700 border-zinc-600 font-semibold'
-                      : 'text-zinc-500 border-zinc-700 hover:border-zinc-500'
+                      ? 'text-ink-1 bg-ink-1/10 border-ink-1/30 font-medium'
+                      : 'text-ink-4 border-line hover:border-ink-4'
                   }`}
                 >
                   {f === 'daily' ? '每日' : '每週'}
@@ -242,20 +242,20 @@ const EditHabitModal = ({ habit, onClose }: EditHabitModalProps): React.JSX.Elem
         </div>
 
         {/* Footer */}
-        <div className="px-5 py-4 border-t border-zinc-800 flex items-center justify-end gap-3 sticky bottom-0 bg-zinc-950">
+        <div className="px-5 py-4 border-t border-line flex items-center justify-end gap-3 sticky bottom-0 bg-card">
           <button
             onClick={onClose}
-            className="px-5 py-2 rounded-full text-sm text-zinc-400 hover:text-white border border-zinc-700 hover:border-zinc-500 transition-all cursor-pointer"
+            className="px-5 py-2 rounded-[10px] text-sm text-ink-2 hover:text-ink-1 border border-line hover:border-ink-4/30 transition-all cursor-pointer"
           >
             取消
           </button>
           <button
             onClick={() => { void handleSave() }}
             disabled={!title.trim() || isLoading}
-            className={`px-6 py-2 rounded-full text-sm font-bold transition-all cursor-pointer ${
+            className={`px-6 py-2 rounded-[10px] text-sm font-medium transition-all cursor-pointer border ${
               title.trim() && !isLoading
-                ? 'bg-violet-600 text-white hover:bg-violet-500 shadow-lg shadow-violet-500/20'
-                : 'bg-violet-600/30 text-violet-800 cursor-not-allowed'
+                ? 'bg-accent border-accent text-paper hover:bg-accent/90'
+                : 'bg-accent-soft/50 border-accent/20 text-accent/50 cursor-not-allowed'
             }`}
           >
             {isLoading ? '儲存中...' : '儲存'}

@@ -6,16 +6,16 @@ import type { DriveType } from '@/types'
 import { ImageIcon, FolderIcon, BellIcon } from '@/components/common/Icons'
 import TimePicker from '@/components/common/TimePicker'
 
-const AvatarDisplay = ({ avatar, name, size = 'w-10 h-10' }: { avatar?: string; name?: string; size?: string }): React.JSX.Element => {
+const AvatarDisplay = ({ avatar, name }: { avatar?: string; name?: string }): React.JSX.Element => {
   const isImage = avatar?.includes('http') || avatar?.startsWith('data:')
   const isShortStr = avatar && avatar.length <= 10 && !isImage
 
   if (isImage) {
-    return <img src={avatar} alt={name} className={`${size} rounded-full object-cover border border-zinc-700`} referrerPolicy="no-referrer" />
+    return <img src={avatar} alt={name} className="w-10 h-10 rounded-full object-cover border border-line shrink-0" referrerPolicy="no-referrer" />
   }
   return (
-    <div className={`${size} rounded-full bg-zinc-800 border border-zinc-700 flex items-center justify-center text-lg`}>
-      {isShortStr ? avatar : (name?.charAt(0) || '?')}
+    <div className="w-10 h-10 rounded-full bg-accent-soft border border-line flex items-center justify-center text-accent font-serif text-lg shrink-0">
+      {isShortStr ? avatar : '✎'}
     </div>
   )
 }
@@ -34,17 +34,14 @@ const CreateHabit = (): React.JSX.Element => {
   const [selectedDrive, setSelectedDrive] = useState<DriveType>(2)
   const [frequency, setFrequency] = useState<'daily' | 'weekly'>('daily')
 
-  // 圖片
   const [imagePreview, setImagePreview] = useState<string | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
-  // 專案
   const [showProjects, setShowProjects] = useState(false)
   const [selectedProjectIds, setSelectedProjectIds] = useState<string[]>([])
   const [newProjectName, setNewProjectName] = useState('')
   const [isCreatingProject, setIsCreatingProject] = useState(false)
 
-  // 提醒
   const [showReminder, setShowReminder] = useState(false)
   const [reminderTime, setReminderTime] = useState('08:00')
   const [reminderEnabled, setReminderEnabled] = useState(false)
@@ -133,229 +130,210 @@ const CreateHabit = (): React.JSX.Element => {
   const selectedProjects = projects.filter(p => selectedProjectIds.includes(p.id))
 
   return (
-    <div className="border-b border-zinc-800 bg-zinc-950">
-      <div className="px-4 py-4">
-        <div className="flex gap-3">
-          <div className="shrink-0">
-            <AvatarDisplay avatar={avatar} name={displayName} />
-          </div>
-          <div className="flex-1">
-            <input
-              type="text"
-              placeholder="今天想建立什麼習慣？"
-              value={title}
-              onChange={e => setTitle(e.target.value)}
-              onFocus={() => setExpanded(true)}
-              className="w-full bg-transparent text-white text-lg placeholder-zinc-600 outline-none border-none mb-2"
-            />
+    <div className="border-b border-line bg-card px-5 py-5">
+      <div className="flex gap-4">
+        <div className="shrink-0">
+          <AvatarDisplay avatar={avatar} name={displayName} />
+        </div>
+        <div className="flex-1">
+          <input
+            type="text"
+            placeholder="寫下一個念頭，或點擊下方開始…"
+            value={title}
+            onChange={e => setTitle(e.target.value)}
+            onFocus={() => setExpanded(true)}
+            className="w-full bg-transparent text-ink-1 text-[15px] placeholder-ink-4 outline-none border-none mb-2 leading-relaxed"
+          />
 
-            {expanded && (
-              <div className="space-y-3">
-                <textarea
-                  placeholder="描述這個習慣的意義和做法..."
-                  value={description}
-                  onChange={e => setDescription(e.target.value)}
-                  rows={2}
-                  className="w-full bg-transparent text-zinc-300 text-sm placeholder-zinc-600 outline-none border-none resize-none leading-relaxed"
-                />
+          {expanded && (
+            <div className="space-y-3 border-t border-dashed border-line-2 pt-3">
+              <textarea
+                placeholder="描述這個習慣的意義和做法..."
+                value={description}
+                onChange={e => setDescription(e.target.value)}
+                rows={2}
+                className="w-full bg-transparent text-ink-2 text-sm placeholder-ink-4 outline-none border-none resize-none leading-relaxed"
+              />
 
-                {/* 圖片預覽 */}
-                {imagePreview && (
-                  <div className="relative">
-                    <img src={imagePreview} alt="預覽" className="w-full max-h-48 object-cover rounded-xl border border-zinc-700" />
-                    <button
-                      onClick={() => { setImagePreview(null); if (fileInputRef.current) fileInputRef.current.value = '' }}
-                      className="absolute top-2 right-2 bg-zinc-900/80 text-zinc-300 rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-zinc-800 cursor-pointer"
-                    >✕</button>
-                  </div>
-                )}
-
-                {/* 專案選擇器 */}
-                {showProjects && (
-                  <div className="bg-violet-500/5 border border-violet-500/20 rounded-xl p-3 space-y-2">
-                    <div className="text-xs text-violet-400 font-semibold mb-2">歸屬專案</div>
-
-                    {projects.length > 0 && (
-                      <div className="flex flex-wrap gap-1.5 mb-2">
-                        {projects.map(p => (
-                          <button
-                            key={p.id}
-                            onClick={() => handleProjectSelect(p.id)}
-                            className={`px-2.5 py-1 rounded-full text-xs border transition-all cursor-pointer ${
-                              selectedProjectIds.includes(p.id)
-                                ? 'bg-violet-500/20 text-violet-300 border-violet-500/40'
-                                : 'text-zinc-500 border-zinc-700 hover:border-zinc-500 hover:text-zinc-300'
-                            }`}
-                          >
-                            {selectedProjectIds.includes(p.id) && <span className="mr-1">✓</span>}
-                            {p.name}
-                          </button>
-                        ))}
-                      </div>
-                    )}
-
-                    {/* 新增專案 */}
-                    <div className="flex items-center gap-2">
-                      <input
-                        type="text"
-                        placeholder="新增專案名稱..."
-                        value={newProjectName}
-                        onChange={e => setNewProjectName(e.target.value)}
-                        onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); void handleCreateProject() } }}
-                        className="flex-1 bg-zinc-800/60 text-zinc-300 text-sm placeholder-zinc-600 outline-none border border-zinc-700 rounded-lg px-3 py-1.5 focus:border-violet-500/50"
-                      />
-                      <button
-                        onClick={() => { void handleCreateProject() }}
-                        disabled={!newProjectName.trim() || isCreatingProject}
-                        className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-violet-600/30 text-violet-300 hover:bg-violet-600/50 transition-all cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed border border-violet-500/30"
-                      >
-                        {isCreatingProject ? '建立中...' : '+ 新增'}
-                      </button>
-                    </div>
-                  </div>
-                )}
-
-                {/* 已選專案 tag（收起時也顯示） */}
-                {selectedProjects.length > 0 && !showProjects && (
-                  <div className="flex flex-wrap gap-1.5">
-                    {selectedProjects.map(p => (
-                      <span key={p.id} className="px-2 py-0.5 rounded-full text-xs bg-violet-500/15 text-violet-300 border border-violet-500/30">
-                        📁 {p.name}
-                      </span>
-                    ))}
-                  </div>
-                )}
-
-                {/* 提醒設定 */}
-                {showReminder && (
-                  <div className="bg-amber-500/5 border border-amber-500/20 rounded-xl p-3">
-                    <div className="text-xs text-amber-400 font-semibold mb-3">設定每日提醒</div>
-                    <div className="flex items-center justify-between">
-                      <TimePicker
-                        value={reminderTime}
-                        onChange={t => { setReminderTime(t); setReminderEnabled(false) }}
-                      />
-                      <button
-                        onClick={handleConfirmReminder}
-                        className={`px-4 py-2 rounded-full text-xs font-semibold transition-all cursor-pointer border ${
-                          reminderEnabled
-                            ? 'bg-amber-500/20 text-amber-400 border-amber-500/30'
-                            : 'bg-zinc-700 text-zinc-300 hover:bg-zinc-600 border-zinc-600'
-                        }`}
-                      >
-                        {reminderEnabled ? '✓ 已設定' : '確認'}
-                      </button>
-                    </div>
-                  </div>
-                )}
-
-                {/* Drive 選擇 */}
-                <div>
-                  <div className="text-zinc-500 text-xs mb-2">選擇驅動力類型</div>
-                  <div className="flex flex-wrap gap-1.5">
-                    {drives.map(drive => (
-                      <button
-                        key={drive.id}
-                        onClick={() => setSelectedDrive(drive.id)}
-                        className={`px-2.5 py-1 rounded-full text-xs font-medium border transition-all duration-200 cursor-pointer ${
-                          selectedDrive === drive.id
-                            ? `${drive.color} ${drive.bgColor} ${drive.borderColor} font-semibold`
-                            : 'text-zinc-500 border-zinc-700 hover:border-zinc-500 hover:text-zinc-300'
-                        }`}
-                      >
-                        {drive.id}. {drive.chineseName}
-                      </button>
-                    ))}
-                  </div>
+              {imagePreview && (
+                <div className="relative">
+                  <img src={imagePreview} alt="預覽" className="w-full max-h-48 object-cover rounded-[10px] border border-line" />
+                  <button
+                    onClick={() => { setImagePreview(null); if (fileInputRef.current) fileInputRef.current.value = '' }}
+                    className="absolute top-2 right-2 bg-paper/80 text-ink-3 rounded-full w-6 h-6 flex items-center justify-center text-sm hover:bg-paper cursor-pointer border border-line"
+                  >✕</button>
                 </div>
+              )}
 
-                {/* 頻率 */}
-                <div className="flex items-center gap-2">
-                  <div className="text-zinc-500 text-xs">頻率：</div>
-                  <button
-                    onClick={() => setFrequency('daily')}
-                    className={`px-3 py-1 rounded-full text-xs border transition-all cursor-pointer ${
-                      frequency === 'daily'
-                        ? 'text-white bg-zinc-700 border-zinc-600'
-                        : 'text-zinc-500 border-zinc-700 hover:border-zinc-500'
-                    }`}
-                  >
-                    每日
-                  </button>
-                  <button
-                    onClick={() => setFrequency('weekly')}
-                    className={`px-3 py-1 rounded-full text-xs border transition-all cursor-pointer ${
-                      frequency === 'weekly'
-                        ? 'text-white bg-zinc-700 border-zinc-600'
-                        : 'text-zinc-500 border-zinc-700 hover:border-zinc-500'
-                    }`}
-                  >
-                    每週
-                  </button>
-                  {selectedDriveData && (
-                    <div className="ml-auto flex items-center gap-1.5">
-                      <span className={`text-xs ${selectedDriveData.color}`}>
-                        {selectedDriveData.chineseName}
-                      </span>
-                      <span className="text-xs text-amber-400">
-                        +{frequency === 'daily' ? 50 : 100} XP
-                      </span>
+              {showProjects && (
+                <div className="bg-accent-soft/20 border border-accent/20 rounded-[10px] p-3 space-y-2">
+                  <div className="text-sm text-accent font-medium mb-2">歸屬專案</div>
+                  {projects.length > 0 && (
+                    <div className="flex flex-wrap gap-1.5 mb-2">
+                      {projects.map(p => (
+                        <button
+                          key={p.id}
+                          onClick={() => handleProjectSelect(p.id)}
+                          className={`px-2.5 py-1 rounded-full text-sm border transition-all cursor-pointer ${
+                            selectedProjectIds.includes(p.id)
+                              ? 'bg-accent/10 text-accent border-accent/30'
+                              : 'text-ink-3 border-line hover:border-ink-4 hover:text-ink-2'
+                          }`}
+                        >
+                          {selectedProjectIds.includes(p.id) && <span className="mr-1">✓</span>}
+                          {p.name}
+                        </button>
+                      ))}
                     </div>
                   )}
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="text"
+                      placeholder="新增專案名稱..."
+                      value={newProjectName}
+                      onChange={e => setNewProjectName(e.target.value)}
+                      onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); void handleCreateProject() } }}
+                      className="flex-1 bg-paper text-ink-2 text-sm placeholder-ink-4 outline-none border border-line rounded-lg px-3 py-1.5 focus:border-accent/40"
+                    />
+                    <button
+                      onClick={() => { void handleCreateProject() }}
+                      disabled={!newProjectName.trim() || isCreatingProject}
+                      className="px-3 py-1.5 rounded-lg text-sm font-medium bg-accent/10 text-accent hover:bg-accent/20 transition-all cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed border border-accent/20"
+                    >
+                      {isCreatingProject ? '建立中...' : '+ 新增'}
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {selectedProjects.length > 0 && !showProjects && (
+                <div className="flex flex-wrap gap-1.5">
+                  {selectedProjects.map(p => (
+                    <span key={p.id} className="px-2 py-0.5 rounded-full text-sm bg-accent-soft text-accent border border-accent/20">
+                      📁 {p.name}
+                    </span>
+                  ))}
+                </div>
+              )}
+
+              {showReminder && (
+                <div className="bg-warm-amber-soft/30 border border-warm-amber/20 rounded-[10px] p-3">
+                  <div className="text-sm text-warm-amber font-medium mb-3">設定每日提醒</div>
+                  <div className="flex items-center justify-between">
+                    <TimePicker
+                      value={reminderTime}
+                      onChange={t => { setReminderTime(t); setReminderEnabled(false) }}
+                    />
+                    <button
+                      onClick={handleConfirmReminder}
+                      className={`px-4 py-2 rounded-full text-sm font-medium transition-all cursor-pointer border ${
+                        reminderEnabled
+                          ? 'bg-warm-amber/10 text-warm-amber border-warm-amber/30'
+                          : 'bg-paper text-ink-2 hover:bg-line-2 border-line'
+                      }`}
+                    >
+                      {reminderEnabled ? '✓ 已設定' : '確認'}
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              <div>
+                <div className="text-ink-4 text-sm mb-2">選擇驅動力類型</div>
+                <div className="flex flex-wrap gap-1.5">
+                  {drives.map(drive => (
+                    <button
+                      key={drive.id}
+                      onClick={() => setSelectedDrive(drive.id)}
+                      className={`px-2.5 py-1 rounded-full text-sm font-medium border transition-all duration-200 cursor-pointer ${
+                        selectedDrive === drive.id
+                          ? `${drive.color} ${drive.bgColor} ${drive.borderColor}`
+                          : 'text-ink-4 border-line hover:border-ink-4 hover:text-ink-2'
+                      }`}
+                    >
+                      {drive.id}. {drive.chineseName}
+                    </button>
+                  ))}
                 </div>
               </div>
-            )}
 
-            {/* Bottom bar */}
-            <div className="flex items-center justify-between mt-3 pt-3 border-t border-zinc-800">
-              <div className="flex items-center gap-2 text-zinc-500">
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept="image/*"
-                  className="hidden"
-                  onChange={handleImageSelect}
-                />
-                <button
-                  onClick={() => fileInputRef.current?.click()}
-                  className={`hover:text-violet-400 transition-colors cursor-pointer ${imagePreview ? 'text-violet-400' : ''}`}
-                  title="新增圖片"
-                >
-                  <ImageIcon size={18} />
-                </button>
-                <button
-                  onClick={handleProjectToggle}
-                  className={`hover:text-violet-400 transition-colors cursor-pointer ${showProjects || selectedProjectIds.length > 0 ? 'text-violet-400' : ''}`}
-                  title="歸屬專案"
-                >
-                  <FolderIcon size={18} />
-                </button>
-                <button
-                  onClick={handleReminderToggle}
-                  className={`hover:text-amber-400 transition-colors cursor-pointer ${showReminder || reminderEnabled ? 'text-amber-400' : ''}`}
-                  title="設定提醒"
-                >
-                  <BellIcon size={18} />
-                </button>
-              </div>
               <div className="flex items-center gap-2">
-                {expanded && title.length > 0 && (
-                  <span className={`text-xs ${title.length > 80 ? 'text-red-400' : 'text-zinc-500'}`}>
-                    {title.length}/100
-                  </span>
+                <div className="text-ink-4 text-sm">頻率：</div>
+                {(['daily', 'weekly'] as const).map(f => (
+                  <button
+                    key={f}
+                    onClick={() => setFrequency(f)}
+                    className={`px-3 py-1 rounded-full text-sm border transition-all cursor-pointer ${
+                      frequency === f
+                        ? 'text-ink-1 bg-ink-1/10 border-ink-1/30'
+                        : 'text-ink-4 border-line hover:border-ink-4'
+                    }`}
+                  >
+                    {f === 'daily' ? '每日' : '每週'}
+                  </button>
+                ))}
+                {selectedDriveData && (
+                  <div className="ml-auto flex items-center gap-1.5">
+                    <span className={`text-sm font-mono ${selectedDriveData.color}`}>
+                      {selectedDriveData.chineseName}
+                    </span>
+                    <span className="text-sm font-mono text-warm-amber">
+                      +{frequency === 'daily' ? 50 : 100} XP
+                    </span>
+                  </div>
                 )}
-                <button
-                  onClick={() => { void handleSubmit() }}
-                  disabled={!title.trim() || isLoading}
-                  className={`px-5 py-2 rounded-full text-sm font-bold transition-all duration-200 cursor-pointer ${
-                    title.trim() && !isLoading
-                      ? 'bg-violet-600 text-white hover:bg-violet-500 shadow-lg shadow-violet-500/20'
-                      : 'bg-violet-600/30 text-violet-800 cursor-not-allowed'
-                  }`}
-                >
-                  {isLoading ? '建立中...' : '建立習慣'}
-                </button>
               </div>
+            </div>
+          )}
+
+          <div className="flex items-center justify-between mt-3 pt-3 border-t border-line-2">
+            <div className="flex items-center gap-2 text-ink-4">
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={handleImageSelect}
+              />
+              <button
+                onClick={() => fileInputRef.current?.click()}
+                className={`p-1.5 rounded-lg hover:bg-line-2 hover:text-ink-2 transition-colors cursor-pointer ${imagePreview ? 'text-accent' : ''}`}
+                title="新增圖片"
+              >
+                <ImageIcon size={16} />
+              </button>
+              <button
+                onClick={handleProjectToggle}
+                className={`p-1.5 rounded-lg hover:bg-line-2 hover:text-ink-2 transition-colors cursor-pointer ${showProjects || selectedProjectIds.length > 0 ? 'text-accent' : ''}`}
+                title="歸屬專案"
+              >
+                <FolderIcon size={16} />
+              </button>
+              <button
+                onClick={handleReminderToggle}
+                className={`p-1.5 rounded-lg hover:bg-line-2 hover:text-ink-2 transition-colors cursor-pointer ${showReminder || reminderEnabled ? 'text-warm-amber' : ''}`}
+                title="設定提醒"
+              >
+                <BellIcon size={16} />
+              </button>
+            </div>
+            <div className="flex items-center gap-2">
+              {expanded && title.length > 0 && (
+                <span className={`font-mono text-sm ${title.length > 80 ? 'text-accent' : 'text-ink-4'}`}>
+                  {title.length}/100
+                </span>
+              )}
+              <button
+                onClick={() => { void handleSubmit() }}
+                disabled={!title.trim() || isLoading}
+                className={`px-5 py-2 rounded-[10px] text-sm font-medium transition-all duration-200 cursor-pointer border ${
+                  title.trim() && !isLoading
+                    ? 'bg-accent border-accent text-paper hover:bg-accent/90'
+                    : 'bg-accent-soft/50 border-accent/20 text-accent/50 cursor-not-allowed'
+                }`}
+              >
+                {isLoading ? '建立中...' : '建立習慣'}
+              </button>
             </div>
           </div>
         </div>

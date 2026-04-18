@@ -4,33 +4,6 @@ import { loginSuccess } from '@/store/authSlice'
 import { api } from '@/store/api'
 import { useLoginGuestMutation } from '@/store/api'
 
-const OctagonLogo = (): React.JSX.Element => (
-  <svg width="56" height="56" viewBox="0 0 36 36" fill="none">
-    <polygon
-      points="11,2 25,2 34,11 34,25 25,34 11,34 2,25 2,11"
-      fill="none"
-      stroke="url(#loginLogoGrad)"
-      strokeWidth="2"
-    />
-    <polygon
-      points="13,6 23,6 30,13 30,23 23,30 13,30 6,23 6,13"
-      fill="url(#loginLogoFill)"
-      opacity="0.3"
-    />
-    <text x="18" y="23" textAnchor="middle" fontSize="12" fontWeight="bold" fill="white">8</text>
-    <defs>
-      <linearGradient id="loginLogoGrad" x1="0" y1="0" x2="36" y2="36">
-        <stop offset="0%" stopColor="#8b5cf6" />
-        <stop offset="100%" stopColor="#06b6d4" />
-      </linearGradient>
-      <linearGradient id="loginLogoFill" x1="0" y1="0" x2="36" y2="36">
-        <stop offset="0%" stopColor="#8b5cf6" />
-        <stop offset="100%" stopColor="#06b6d4" />
-      </linearGradient>
-    </defs>
-  </svg>
-)
-
 const GoogleIcon = (): React.JSX.Element => (
   <svg width="18" height="18" viewBox="0 0 24 24">
     <path
@@ -156,61 +129,51 @@ const LoginPage = (): React.JSX.Element => {
   ]
 
   return (
-    <div className="min-h-screen bg-zinc-950 flex">
+    <div className="min-h-screen bg-ivory flex">
       {/* Left decorative panel - hidden on mobile */}
-      <div className="hidden lg:flex flex-col justify-between w-96 bg-zinc-900 border-r border-zinc-800 p-10 relative overflow-hidden">
-        {/* Background octagon pattern */}
-        <div className="absolute inset-0 opacity-5">
-          {Array.from({ length: 5 }, (_, row) =>
-            Array.from({ length: 4 }, (_, col) => (
-              <svg
-                key={`${row}-${col}`}
-                className="absolute"
-                style={{ left: `${col * 28 - 8}%`, top: `${row * 22 - 5}%` }}
-                width="80"
-                height="80"
-                viewBox="0 0 80 80"
-              >
-                <polygon
-                  points="24,4 56,4 76,24 76,56 56,76 24,76 4,56 4,24"
-                  fill="none"
-                  stroke="white"
-                  strokeWidth="1.5"
-                />
-              </svg>
-            ))
-          )}
+      <div className="hidden lg:flex flex-col justify-between w-96 bg-paper border-r border-line p-10 relative overflow-hidden">
+        <div className="absolute inset-0 opacity-30">
+          <svg viewBox="0 0 400 800" width="100%" height="100%" className="absolute inset-0">
+            <g fill="none" stroke="#1a1915" strokeWidth="0.5" opacity=".3">
+              <circle cx="80" cy="120" r="60"/><circle cx="160" cy="200" r="92"/>
+              <circle cx="350" cy="600" r="56"/><circle cx="280" cy="400" r="40"/>
+              <path d="M 20 700 Q 150 300 300 450 T 420 200"/>
+            </g>
+          </svg>
         </div>
 
         {/* Top branding */}
         <div className="relative z-10">
           <div className="flex items-center gap-3 mb-8">
-            <OctagonLogo />
+            <div className="relative w-10 h-10 rounded-full bg-ink-1 text-paper flex items-center justify-center font-serif text-[22px] italic shrink-0">
+              D
+              <span className="absolute inset-[-3px] rounded-full border border-ink-1 opacity-20 pointer-events-none"></span>
+            </div>
             <div>
-              <div className="text-white font-bold text-lg leading-tight">八角習慣</div>
-              <div className="text-zinc-500 text-sm">Octalysis Tracker</div>
+              <div className="font-serif text-2xl text-ink-1 leading-tight">DODOHabit</div>
+              <div className="font-mono text-[12px] text-ink-4 tracking-widest uppercase">Octalysis · v2</div>
             </div>
           </div>
-          <h2 className="text-white text-2xl font-bold leading-snug mb-3">
-            用八大驅動力<br />打造不可停止的習慣
+          <h2 className="font-serif text-[32px] leading-[1.1] text-ink-1 mb-3">
+            用八大驅動力<br />打造<em className="italic text-accent">不可停止</em>的習慣
           </h2>
-          <p className="text-zinc-400 text-sm leading-relaxed">
-            基於 Yu-kai Chou 的 Octalysis 框架，透過遊戲化設計讓習慣養成更有趣、更持久。
+          <p className="text-ink-3 text-sm leading-relaxed">
+            基於 周郁凱老師 的 八角框架，透過遊戲化設計讓習慣養成更有趣、更持久。
           </p>
         </div>
 
         {/* Drive badges */}
         <div className="relative z-10">
-          <div className="text-zinc-500 text-xs mb-3 uppercase tracking-wider">八大驅動力</div>
+          <div className="font-mono text-sm text-ink-4 mb-3 uppercase tracking-[0.12em]">八大驅動力</div>
           <div className="flex flex-wrap gap-2">
             {drives.map(d => (
               <span
                 key={d.label}
-                className="px-2.5 py-1 rounded-full text-xs font-medium border"
+                className="px-2.5 py-1 rounded-full text-sm font-medium border font-mono"
                 style={{
                   color: d.color,
                   borderColor: `${d.color}40`,
-                  backgroundColor: `${d.color}12`,
+                  backgroundColor: `${d.color}14`,
                 }}
               >
                 {d.label}
@@ -224,16 +187,16 @@ const LoginPage = (): React.JSX.Element => {
       <div className="flex-1 flex flex-col items-center justify-center px-6">
         {/* Mobile logo */}
         <div className="flex lg:hidden items-center gap-3 mb-10">
-          <OctagonLogo />
+          <div className="w-10 h-10 rounded-full bg-ink-1 text-paper flex items-center justify-center font-serif text-[22px] italic">D</div>
           <div>
-            <div className="text-white font-bold text-lg">八角習慣</div>
-            <div className="text-zinc-500 text-sm">Octalysis Tracker</div>
+            <div className="font-serif text-2xl text-ink-1">DODOHabit</div>
+            <div className="font-mono text-[12px] text-ink-4 tracking-widest uppercase">Octalysis · v2</div>
           </div>
         </div>
 
         <div className="w-full max-w-sm">
-          <h1 className="text-white text-3xl font-bold mb-2">歡迎回來</h1>
-          <p className="text-zinc-400 text-sm mb-10">登入以繼續追蹤你的習慣旅程</p>
+          <h1 className="font-serif text-[38px] leading-[1.02] text-ink-1 mb-2 text-center">歡迎<em className="italic text-accent">回來</em></h1>
+          <p className="text-ink-3 text-sm mb-10 font-mono text-center">登入以繼續追蹤你的習慣旅程</p>
 
           {/* Google Sign-In Button */}
           <button
@@ -242,10 +205,10 @@ const LoginPage = (): React.JSX.Element => {
               handleGoogleLogin()
             }}
             disabled={isLoading}
-            className="w-full flex items-center justify-center gap-3 bg-white hover:bg-zinc-100 text-zinc-900 font-semibold py-3.5 px-6 rounded-2xl transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed shadow-lg shadow-black/20 cursor-pointer"
+            className="w-full flex items-center justify-center gap-3 bg-card hover:bg-paper text-ink-1 font-medium py-3.5 px-6 rounded-[12px] border border-line transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer"
           >
             {isLoading ? (
-              <svg className="animate-spin w-5 h-5 text-zinc-500" viewBox="0 0 24 24" fill="none">
+              <svg className="animate-spin w-5 h-5 text-ink-3" viewBox="0 0 24 24" fill="none">
                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
               </svg>
@@ -258,7 +221,7 @@ const LoginPage = (): React.JSX.Element => {
           {/* LINE Sign-In Button */}
           <button
             onClick={handleLineLogin}
-            className="w-full flex items-center justify-center gap-3 bg-[#00B900] hover:bg-[#009900] text-white font-semibold py-3.5 px-6 rounded-2xl transition-all duration-200 shadow-lg shadow-black/20 mt-3 cursor-pointer"
+            className="w-full flex items-center justify-center gap-3 bg-[#00B900] hover:bg-[#009900] text-white font-medium py-3.5 px-6 rounded-[12px] transition-all duration-200 mt-3 cursor-pointer"
           >
             <LineIcon />
             <span>使用 LINE 帳號登入</span>
@@ -267,7 +230,7 @@ const LoginPage = (): React.JSX.Element => {
           {/* X Sign-In Button */}
           <button
             onClick={() => { void handleXLogin() }}
-            className="w-full flex items-center justify-center gap-3 bg-black hover:bg-zinc-800 text-white font-semibold py-3.5 px-6 rounded-2xl transition-all duration-200 shadow-lg shadow-black/20 mt-3 border border-zinc-700 cursor-pointer"
+            className="w-full flex items-center justify-center gap-3 bg-ink-1 hover:bg-ink-2 text-paper font-medium py-3.5 px-6 rounded-[12px] transition-all duration-200 mt-3 cursor-pointer"
           >
             <XIcon />
             <span>使用 X 帳號登入</span>
@@ -275,27 +238,27 @@ const LoginPage = (): React.JSX.Element => {
 
           {/* Error message */}
           {error && (
-            <div className="mt-4 px-4 py-3 bg-red-500/10 border border-red-500/30 rounded-xl text-red-400 text-sm text-center">
+            <div className="mt-4 px-4 py-3 bg-accent-soft border border-accent/30 rounded-[10px] text-accent text-sm text-center">
               {error}
             </div>
           )}
 
           {/* Divider */}
-          <div className="flex items-center gap-3 my-8">
-            <div className="flex-1 h-px bg-zinc-800" />
-            <span className="text-zinc-600 text-xs">或者</span>
-            <div className="flex-1 h-px bg-zinc-800" />
+          <div className="flex items-center gap-3.5 my-8">
+            <div className="flex-1 h-px bg-line" />
+            <span className="font-serif text-[18px] italic text-ink-4">§</span>
+            <div className="flex-1 h-px bg-line" />
           </div>
 
           {/* Guest mode */}
           <button
             onClick={() => { void handleGuestLogin() }}
-            className="w-full py-3 rounded-2xl border border-zinc-700 text-zinc-300 text-sm font-medium hover:border-zinc-500 hover:text-white hover:bg-zinc-900 transition-all duration-200 cursor-pointer"
+            className="w-full py-3 rounded-xl border border-line text-ink-2 text-sm font-medium hover:border-ink-4/40 hover:bg-paper transition-all duration-200 cursor-pointer bg-card"
           >
             以訪客身份探索
           </button>
 
-          <p className="text-zinc-600 text-xs text-center mt-8 leading-relaxed">
+          <p className="text-ink-4 font-mono text-[12px] text-center mt-8 leading-relaxed">
             登入即表示你同意我們的服務條款<br />
             你的資料受到 OAuth 2.0 保護
           </p>
