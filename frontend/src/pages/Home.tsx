@@ -22,15 +22,6 @@ const Home = (): React.JSX.Element => {
             <span className="text-accent">●</span>
             第 {weekNumber} 週 · {dayName}
           </div>
-          <div className="flex items-center gap-2">
-            <div className="flex items-center gap-2 px-3 py-1.5 border border-line rounded-[10px] bg-paper text-ink-3 text-[13px] min-w-[180px]">
-              <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.4">
-                <circle cx="7" cy="7" r="4.5"/><path d="M10.5 10.5L14 14"/>
-              </svg>
-              搜尋習慣、筆記…
-              <span className="ml-auto font-mono text-sm border border-line px-1.5 py-0.5 rounded text-ink-4">⌘K</span>
-            </div>
-          </div>
         </div>
         <h1 className="font-serif text-[32px] leading-[1.02] tracking-[-0.015em] text-ink-1 mt-5">
           今天想建立<em className="italic text-accent">什麼習慣</em>？
