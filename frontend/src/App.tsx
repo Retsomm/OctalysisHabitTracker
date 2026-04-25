@@ -5,9 +5,7 @@ import { PersistGate } from 'redux-persist/integration/react'
 import { Toaster } from 'react-hot-toast'
 import { store, persistor } from '@/store'
 import { useAppSelector } from '@/store/hooks'
-import { useIsAnyFetching } from '@/store/hooks'
 import Layout from '@/components/layout/Layout'
-import TopProgressBar from '@/components/common/TopProgressBar'
 import Home from '@/pages/Home'
 import Dashboard from '@/pages/Dashboard'
 import Profile from '@/pages/Profile'
@@ -16,11 +14,6 @@ import LoginPage from '@/pages/LoginPage'
 import LineCallback from '@/pages/LineCallback'
 import XCallback from '@/pages/XCallback'
 import GoogleCallback from '@/pages/GoogleCallback'
-
-const GlobalProgressBar = (): React.JSX.Element => {
-  const isFetching = useIsAnyFetching()
-  return <TopProgressBar isActive={isFetching} />
-}
 
 const AppInner = (): React.JSX.Element => {
   const isAuthenticated = useAppSelector(state => state.auth.isAuthenticated)
@@ -59,7 +52,6 @@ const App = (): React.JSX.Element => {
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
         <BrowserRouter>
-          <GlobalProgressBar />
           <AppInner />
           <Toaster
             position="bottom-center"

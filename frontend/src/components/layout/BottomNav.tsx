@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { NavLink } from 'react-router-dom'
 
 const navItems = [
@@ -42,7 +42,20 @@ const navItems = [
   },
 ]
 
-const BottomNav = (): React.JSX.Element => (
+const BottomNav = (): React.JSX.Element | null => {
+  const [keyboardOpen, setKeyboardOpen] = useState(false)
+
+  useEffect(() => {
+    const vv = window.visualViewport
+    if (!vv) return
+    const check = () => setKeyboardOpen(vv.height < window.innerHeight * 0.75)
+    vv.addEventListener('resize', check)
+    return () => vv.removeEventListener('resize', check)
+  }, [])
+
+  if (keyboardOpen) return null
+
+  return (
   <nav className="fixed bottom-0 left-0 right-0 z-20 flex md:hidden bg-paper border-t border-line">
     {navItems.map(item => (
       <NavLink
@@ -60,6 +73,7 @@ const BottomNav = (): React.JSX.Element => (
       </NavLink>
     ))}
   </nav>
-)
+  )
+}
 
 export default BottomNav
