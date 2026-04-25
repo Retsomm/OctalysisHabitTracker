@@ -41,7 +41,7 @@
     line-height: 1.5;
     letter-spacing: -0.003em;
     -webkit-font-smoothing: antialiased;
-    min-height: 100vh;
+    overscroll-behavior: none;
   }
 
   #root {
