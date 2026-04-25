@@ -1,5 +1,6 @@
 import React, { useRef, useEffect } from 'react'
 import type { ReactNode } from 'react'
+import { useLocation } from 'react-router-dom'
 import Sidebar from './Sidebar'
 import RightPanel from './RightPanel'
 import BottomNav from './BottomNav'
@@ -12,6 +13,11 @@ const Layout = ({ children }: LayoutProps): React.JSX.Element => {
   const contentRef = useRef<HTMLDivElement>(null)
   const rightPanelRef = useRef<HTMLDivElement>(null)
   const lastScrollY = useRef(0)
+  const { pathname } = useLocation()
+
+  useEffect(() => {
+    contentRef.current?.scrollTo({ top: 0 })
+  }, [pathname])
 
   useEffect(() => {
     const container = contentRef.current
