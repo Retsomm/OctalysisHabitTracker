@@ -42,37 +42,62 @@ const navItems = [
   },
 ]
 
+const INPUT_TAGS = new Set(['INPUT', 'TEXTAREA', 'SELECT'])
+
 const BottomNav = (): React.JSX.Element | null => {
   const [keyboardOpen, setKeyboardOpen] = useState(false)
 
   useEffect(() => {
-    const vv = window.visualViewport
-    if (!vv) return
-    const check = () => setKeyboardOpen(vv.height < window.innerHeight * 0.75)
-    vv.addEventListener('resize', check)
-    return () => vv.removeEventListener('resize', check)
+    const onFocusIn = (e: FocusEvent) => {
+      if (INPUT_TAGS.has((e.target as HTMLElement).tagName)) {
+        setKeyboardOpen(true)
+        // 鎖住 body scroll，防止 iOS fixed 元素在 scroll 時偏移
+        document.body.style.position = 'fixed'
+        document.body.style.width = '100%'
+      }
+    }
+
+    const onFocusOut = () => {
+      // 延遲確保 blur 後不是立刻 focus 另一個 input
+      setTimeout(() => {
+        if (!document.activeElement || !INPUT_TAGS.has(document.activeElement.tagName)) {
+          setKeyboardOpen(false)
+          document.body.style.position = ''
+          document.body.style.width = ''
+        }
+      }, 100)
+    }
+
+    window.addEventListener('focusin', onFocusIn)
+    window.addEventListener('focusout', onFocusOut)
+    return () => {
+      window.removeEventListener('focusin', onFocusIn)
+      window.removeEventListener('focusout', onFocusOut)
+      document.body.style.position = ''
+      document.body.style.width = ''
+    }
   }, [])
 
   if (keyboardOpen) return null
 
   return (
-  <nav className="fixed bottom-0 left-0 right-0 z-20 flex md:hidden bg-paper border-t border-line">
-    {navItems.map(item => (
-      <NavLink
-        key={item.path}
-        to={item.path}
-        end={item.path === '/'}
-        className={({ isActive }) =>
-          `flex flex-1 flex-col items-center justify-center py-3 gap-1 transition-colors ${
-            isActive ? 'text-ink-1' : 'text-ink-4'
-          }`
-        }
-      >
-        <span className="w-5 h-5 flex items-center justify-center">{item.icon}</span>
-        <span className="font-mono text-[10px] leading-none">{item.label}</span>
-      </NavLink>
-    ))}
-  </nav>
+    <nav className="fixed bottom-0 left-0 right-0 z-20 flex md:hidden bg-paper border-t border-line">
+      {navItems.map(item => (
+        <NavLink
+          key={item.path}
+          to={item.path}
+          end={item.path === '/'}
+          className={({ isActive }) =>
+            `flex flex-1 flex-col items-center justify-center py-3 gap-1 transition-colors ${
+              isActive ? 'text-ink-1' : 'text-ink-4'
+            }`
+          }
+        >
+          <span className="w-5 h-5 flex items-center justify-center">{item.icon}</span>
+          <span className="font-mono text-[10px] leading-none">{item.label}</span>
+        </NavLink>
+      ))}
+    </nav>
   )
 }
 
