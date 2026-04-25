@@ -51,19 +51,13 @@ const BottomNav = (): React.JSX.Element | null => {
     const onFocusIn = (e: FocusEvent) => {
       if (INPUT_TAGS.has((e.target as HTMLElement).tagName)) {
         setKeyboardOpen(true)
-        // 鎖住 body scroll，防止 iOS fixed 元素在 scroll 時偏移
-        document.body.style.position = 'fixed'
-        document.body.style.width = '100%'
       }
     }
 
     const onFocusOut = () => {
-      // 延遲確保 blur 後不是立刻 focus 另一個 input
       setTimeout(() => {
         if (!document.activeElement || !INPUT_TAGS.has(document.activeElement.tagName)) {
           setKeyboardOpen(false)
-          document.body.style.position = ''
-          document.body.style.width = ''
         }
       }, 100)
     }
@@ -73,8 +67,6 @@ const BottomNav = (): React.JSX.Element | null => {
     return () => {
       window.removeEventListener('focusin', onFocusIn)
       window.removeEventListener('focusout', onFocusOut)
-      document.body.style.position = ''
-      document.body.style.width = ''
     }
   }, [])
 

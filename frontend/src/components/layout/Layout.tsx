@@ -9,20 +9,24 @@ interface LayoutProps {
 }
 
 const Layout = ({ children }: LayoutProps): React.JSX.Element => {
+  const contentRef = useRef<HTMLDivElement>(null)
   const rightPanelRef = useRef<HTMLDivElement>(null)
   const lastScrollY = useRef(0)
 
   useEffect(() => {
+    const container = contentRef.current
+    if (!container) return
+
     const handleScroll = () => {
       const panel = rightPanelRef.current
       if (!panel) return
 
-      const scrollY = window.scrollY
+      const scrollY = container.scrollTop
       const dy = scrollY - lastScrollY.current
       lastScrollY.current = scrollY
 
       const panelHeight = panel.offsetHeight
-      const vpHeight = window.innerHeight
+      const vpHeight = container.clientHeight
 
       if (panelHeight <= vpHeight) {
         panel.style.top = '0px'
@@ -34,17 +38,20 @@ const Layout = ({ children }: LayoutProps): React.JSX.Element => {
       }
     }
 
-    window.addEventListener('scroll', handleScroll, { passive: true })
-    return () => window.removeEventListener('scroll', handleScroll)
+    container.addEventListener('scroll', handleScroll, { passive: true })
+    return () => container.removeEventListener('scroll', handleScroll)
   }, [])
 
   return (
-    <div className="min-h-screen bg-ivory flex [overflow-x:clip]">
+    <div className="h-screen bg-ivory flex [overflow-x:clip] overflow-hidden">
       <Sidebar />
 
-      <div className="flex-1 min-w-0 ml-0 md:ml-16 lg:ml-64 flex justify-center pb-16 md:pb-0">
+      <div
+        ref={contentRef}
+        className="flex-1 min-w-0 ml-0 md:ml-16 lg:ml-64 flex justify-center overflow-y-auto pb-[calc(64px+env(safe-area-inset-bottom,0px))] md:pb-0"
+      >
         <div className="flex w-full min-w-0 max-w-5xl">
-          <main className="flex-1 min-w-0 min-h-screen border-x border-line max-w-2xl w-full overflow-x-hidden bg-ivory">
+          <main className="flex-1 min-w-0 border-x border-line max-w-2xl w-full overflow-x-hidden bg-ivory">
             {children}
           </main>
 

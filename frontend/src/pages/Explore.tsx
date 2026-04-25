@@ -179,8 +179,8 @@ const Explore = (): React.JSX.Element => {
                       </div>
                       <div className="text-ink-3 text-sm font-mono mt-0.5 truncate">@{lu.username}</div>
                       <div className="flex gap-1.5 mt-2.5">
-                        <span className="text-[12px] px-2 py-0.5 rounded-full border border-line bg-paper text-ink-3 font-mono cursor-pointer hover:bg-line-2">關注</span>
-                        <span className="text-[12px] px-2 py-0.5 rounded-full border border-line bg-paper text-ink-3 font-mono cursor-pointer hover:bg-line-2">查看</span>
+                        <button className="flex-1 text-[11px] py-1 rounded-lg border border-line bg-paper text-ink-3 font-mono hover:bg-line-2 transition-colors">關注</button>
+                        <button className="flex-1 text-[11px] py-1 rounded-lg bg-ink-2 text-paper font-mono hover:bg-ink-1 transition-colors">查看</button>
                       </div>
                     </div>
                   </div>
