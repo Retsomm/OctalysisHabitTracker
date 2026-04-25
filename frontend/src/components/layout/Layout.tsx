@@ -48,7 +48,7 @@ const Layout = ({ children }: LayoutProps): React.JSX.Element => {
 
       <div
         ref={contentRef}
-        className="flex-1 min-w-0 ml-0 md:ml-16 lg:ml-64 flex justify-center overflow-y-auto pb-[calc(64px+env(safe-area-inset-bottom,0px))] md:pb-0"
+        className="flex-1 min-w-0 ml-0 md:ml-16 lg:ml-64 flex justify-center overflow-y-auto pb-[calc(70px+env(safe-area-inset-bottom,0px))] md:pb-0"
       >
         <div className="flex w-full min-w-0 max-w-5xl">
           <main className="flex-1 min-w-0 border-x border-line max-w-2xl w-full overflow-x-hidden bg-ivory">

@@ -80,7 +80,7 @@ const BottomNav = (): React.JSX.Element | null => {
           to={item.path}
           end={item.path === '/'}
           className={({ isActive }) =>
-            `flex flex-1 flex-col items-center justify-center py-3 gap-1 transition-colors ${
+            `flex flex-1 flex-col items-center justify-center py-[15px] gap-1 transition-colors ${
               isActive ? 'text-ink-1' : 'text-ink-4'
             }`
           }
